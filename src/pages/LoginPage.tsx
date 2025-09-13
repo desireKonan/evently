@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import EventlyLogo from '@/assets/evently.svg'
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+    const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,24 +21,22 @@ const LoginPage: React.FC = () => {
           <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#29382f] px-10 py-3">
             <div className="flex items-center gap-4 text-gray-800">
               <div className="size-6 text-[#38e07b]">
-                <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
-                </svg>
+                <img src={EventlyLogo} />
               </div>
               <h2 className="text-gray-800 text-xl font-bold leading-tight tracking-[-0.015em]">Eventify</h2>
             </div>
             
             <div className="flex flex-1 justify-end gap-8">
               <nav className="flex items-center gap-9">
-                <a className="text-gray-800 hover:text-gray-400 text-base font-medium leading-normal transition-colors" href="#">
+                <Link className="text-gray-800 hover:text-gray-400 text-base font-medium leading-normal transition-colors" to="/explore">
                   Explorer
-                </a>
-                <a className="text-gray-800 hover:text-gray-400 text-base font-medium leading-normal transition-colors" href="#">
+                </Link>
+                <Link className="text-gray-800 hover:text-gray-400 text-base font-medium leading-normal transition-colors" to="/create/event">
                   Créer un événement
-                </a>
-                <a className="text-gray-800 hover:text-gray-400 text-base font-medium leading-normal transition-colors" href="#">
+                </Link>
+                <Link className="text-gray-800 hover:text-gray-400 text-base font-medium leading-normal transition-colors" to="/confirmation">
                   Tarifs
-                </a>
+                </Link>
               </nav>
               
               <div className="flex gap-2">
