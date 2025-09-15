@@ -2,6 +2,7 @@ import { Search, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/stores/authStore'
+import { Link } from 'react-router-dom'
 
 export function Header() {
   const { user, isAuthenticated } = useAuthStore()
@@ -22,7 +23,7 @@ export function Header() {
               <a className="text-sm font-medium text-muted-foreground hover:text-white transition-colors" href="/explore">
                 Explorer
               </a>
-              <a className="text-sm font-medium text-muted-foreground hover:text-white transition-colors" href="/create">
+              <a className="text-sm font-medium text-muted-foreground hover:text-white transition-colors" href="/create/event">
                 Créer un événement
               </a>
               <a className="text-sm font-medium text-muted-foreground hover:text-white transition-colors" href="/dashboard">
@@ -56,9 +57,9 @@ export function Header() {
                 </Button>
               </div>
             ) : (
-              <Button variant="default">
+              <Link to="/login">
                 Se connecter
-              </Button>
+              </Link>
             )}
           </div>
         </div>

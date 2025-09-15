@@ -65,7 +65,7 @@ const mockEvents: Event[] = [
   },
 ]
 
-export function LandingPage() {
+export function  LandingPage() {
   const { events, filteredEvents, setEvents, setSelectedEvent, getFilteredEvents } = useEventStore()
 
   useEffect(() => {
