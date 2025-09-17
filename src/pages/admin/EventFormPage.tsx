@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import Layout from '@/components/client/EventLayout';
+import Layout from '@/components/layout/client/EventLayout';
 
 const EventFormPage: React.FC = () => {
   const [formData, setFormData] = useState({

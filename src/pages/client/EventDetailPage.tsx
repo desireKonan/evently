@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import EventLayout from '@/components/client/EventLayout';
+import EventLayout from '@/components/layout/client/EventLayout';
 import EventlyIcon from '@/components/shared/EventlyIcons';
 
 interface EventDetailPageProps {

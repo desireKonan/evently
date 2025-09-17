@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { EventCard } from '@/components/shared/EventCard';
-import EventLayout from '@/components/client/EventLayout';
+import EventLayout from '@/components/layout/client/EventLayout';
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState("all");

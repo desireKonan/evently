@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import EventLayout from '@/components/client/EventLayout';
+import EventLayout from '@/components/layout/client/EventLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
