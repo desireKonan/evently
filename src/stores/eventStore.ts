@@ -8,6 +8,7 @@ export interface Event {
   date: string
   time: string
   location: string
+  isFavorite: boolean
   price: number
   image: string
   category: 'music' | 'tech' | 'sports' | 'all'

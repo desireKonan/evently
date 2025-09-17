@@ -1,18 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: ["class"],
-    content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-  	extend: {
-  		colors: {
-			primary: '#16a085',
-			secondary: '#27ae60',
-			accent: '#f39c12',
-			background: '#ecf0f1',
-			text: '#2c3e50',
+	darkMode: ["class"],
+	content: [
+		"./index.html",
+		"./src/**/*.{js,ts,jsx,tsx}",
+	],
+	theme: {
+		extend: {
+			colors: {
+				'event-primary': '#16a085',
+				'event-secondary': '#27ae60',
+				'event-accent': '#f39c12',
+				'event-background': '#ecf0f1',
+				'event-foreground': '#2c3e50',
+				primary: '#16a085',
+				secondary: '#27ae60',
+				accent: '#f39c12',
+				background: '#ecf0f1',
+				text: '#2c3e50',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -53,30 +58,30 @@ export default {
 					'4': 'hsl(var(--chart-4))',
 					'5': 'hsl(var(--chart-5))'
 				},
-			brand: {
-				primary: '#16a085',
-				secondary: '#27ae60',
-				accent: '#f39c12',
-				background: '#ecf0f1',
+				brand: {
+					primary: '#16a085',
+					secondary: '#27ae60',
+					accent: '#f39c12',
+					background: '#ecf0f1',
+				}
+			},
+			fontFamily: {
+				sans: [
+					'Spline Sans',
+					'Noto Sans',
+					'sans-serif'
+				]
+			},
+			borderRadius: {
+				lg: 'var(--radius)',
+				md: 'calc(var(--radius) - 2px)',
+				sm: 'calc(var(--radius) - 4px)'
 			}
-  		},
-  		fontFamily: {
-  			sans: [
-  				'Spline Sans',
-  				'Noto Sans',
-  				'sans-serif'
-  			]
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
-  },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/container-queries'),
-    require("tailwindcss-animate")
-],
+		}
+	},
+	plugins: [
+		require('@tailwindcss/forms'),
+		require('@tailwindcss/container-queries'),
+		require("tailwindcss-animate")
+	],
 }
