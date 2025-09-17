@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import DashboardPage from './pages/DashboardPage'
-import { EventFormPage } from './pages/EventFormPage'
-import { EventDetailPage } from './pages/EventDetailPage'
-import LoginPage from './pages/LoginPage'
-import CalendarPage from './pages/FullCalendarPage'
-import ConfirmationPayment from './pages/ConfirmationPage'
-import QRScannerPage from './pages/ScanPage'
-import EventlyLanding from './pages/NewLandingPage'
+import DashboardPage from './pages/admin/DashboardPage'
+import EventFormPage from './pages/admin/EventFormPage'
+import EventDetailPage from './pages/client/EventDetailPage'
+import LoginPage from './pages/shared/LoginPage'
+import CalendarPage from './pages/admin/FullCalendarPage'
+import ConfirmationPayment from './pages/client/ConfirmationPage'
+import QRScannerPage from './pages/shared/ScanPage'
+import LandingPage from './pages/client/LandingPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,8 +24,8 @@ function App() {
       <Router>
         <div className="min-h-screen bg-background">
           <Routes>
-            <Route path="/" element={<EventlyLanding />} />
-            <Route path="/explore" element={<EventlyLanding />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/explore" element={<LandingPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/create/event" element={<EventFormPage />} />
             <Route path="/event/:id" element={<EventDetailPage />} />

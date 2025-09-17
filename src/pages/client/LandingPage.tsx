@@ -4,7 +4,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { EventCard } from '@/components/shared/EventCard';
 import EventLayout from '@/components/client/EventLayout';
 
-const EventlyLanding = () => {
+const LandingPage = () => {
   const [activeTab, setActiveTab] = useState("all");
   
   // Données des événements
@@ -29,7 +29,7 @@ const EventlyLanding = () => {
     }
   ];
 
-  const allEvents = [
+  const allEvents: any[] = [
     {
       id: 1,
       title: "Tech Conference 2024",
@@ -156,4 +156,4 @@ const EventlyLanding = () => {
   );
 };
 
-export default EventlyLanding;
+export default LandingPage;

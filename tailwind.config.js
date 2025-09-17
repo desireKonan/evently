@@ -8,11 +8,14 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				'event-primary': '#16a085',
-				'event-secondary': '#27ae60',
-				'event-accent': '#f39c12',
-				'event-background': '#ecf0f1',
-				'event-foreground': '#2c3e50',
+				event: {
+					primary: '#16a085',
+					secondary: '#27ae60',
+					accent: '#f39c12',
+					background: '#ecf0f1',
+					foreground: '#2c3e50',
+					'muted-foreground': '#34495e',
+				},
 				primary: '#16a085',
 				secondary: '#27ae60',
 				accent: '#f39c12',
