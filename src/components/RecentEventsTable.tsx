@@ -39,7 +39,7 @@ const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }: RecentE
                 <TableCell>{event.organizer}</TableCell>
                 <TableCell>{event.category}</TableCell>
                 <TableCell>
-                  <Badge variant={event.status === 'published' ? 'default' : 'secondary'}>
+                  <Badge variant={event.status === 'published' ? 'default' : 'secondary'} className={event.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
                     {event.status === 'published' ? 'Publié' : 'Brouillon'}
                   </Badge>
                 </TableCell>

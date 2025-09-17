@@ -1,42 +1,65 @@
 // components/layout/AdminSidebar.tsx
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { 
+  SidebarContent, 
+  SidebarGroup, 
+  Sidebar, 
+  SidebarGroupContent, 
+  SidebarGroupLabel, 
+  SidebarMenu, 
+  SidebarMenuButton, 
+  SidebarMenuItem 
+} from '@/components/ui/sidebar';
+import React, { type JSX } from 'react';
+import {
+  LayoutDashboard,
+  Calendar,
+  Users,
+  Building,
+  Tag,
+  Settings
+} from 'lucide-react';
+
+interface NavItem {
+  id: number;
+  title: string;
+  icon: JSX.Element;
+  active: boolean;
+  url: string;
+}
+
 
 const AdminSidebar: React.FC = () => {
-  const location = useLocation();
-  
-  const menuItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { path: '/admin/events', label: 'Événements', icon: 'event' },
-    { path: '/admin/calendar', label: 'Calendrier', icon: 'calendar' },
-    { path: '/admin/users', label: 'Utilisateurs', icon: 'people' },
+  const navItems: NavItem[] = [
+    { id: 1, title: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, active: true, url: "#" },
+    { id: 2, title: "Événements", icon: <Calendar className="h-5 w-5" />, active: false, url: "#" },
+    { id: 3, title: "Utilisateurs", icon: <Users className="h-5 w-5" />, active: false, url: "#" },
+    { id: 4, title: "Organisateurs", icon: <Building className="h-5 w-5" />, active: false, url: "#" },
+    { id: 5, title: "Catégories", icon: <Tag className="h-5 w-5" />, active: false, url: "#" },
+    { id: 6, title: "Paramètres", icon: <Settings className="h-5 w-5" />, active: false, url: "#" }
   ];
 
   return (
-    <div className="w-64 bg-white shadow-md h-screen fixed">
-      <div className="p-4 border-b">
-        <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
-      </div>
-      <nav className="p-4">
-        <ul className="space-y-2">
-          {menuItems.map((item) => (
-            <li key={item.path}>
-              <Link
-                to={item.path}
-                className={`flex items-center p-2 rounded-lg transition-colors ${
-                  location.pathname === item.path
-                    ? 'bg-event-primary text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <span className="material-symbols-outlined mr-3">{item.icon}</span>
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      { item.icon } 
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 };
 

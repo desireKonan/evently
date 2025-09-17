@@ -24,7 +24,7 @@ export interface StatCardData {
 
 const Dashboard: React.FC = () => {
   // Données pour les cartes de statistiques
-  const statCards: StatCardData[] = [
+  const statCards: Partial<StatCardData>[] = [
     {
       id: 1,
       title: "Événements",
@@ -68,10 +68,9 @@ const Dashboard: React.FC = () => {
           {statCards.map((card) => (
             <StatCard
               key={card.id}
-              title={card.title}
-              value={card.value}
-              icon={card.icon}
-              color={card.color}
+              title={card.title || ''}
+              value={card.value || 1}
+              color={card.color || ''}
             />
           ))}
         </div>
