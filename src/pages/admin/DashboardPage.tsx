@@ -2,6 +2,7 @@ import React from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
 import StatCard from '@/components/StatCard';
 import RecentEventsTable from '@/components/RecentEventsTable';
+import { recentEvents } from '@/mock/event.mock';
 
 // Définition des types TypeScript
 export interface Event {
@@ -76,7 +77,7 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Recent Events Table */}
-        <RecentEventsTable />
+        <RecentEventsTable events={recentEvents} />
       </div>
     </Layout>
   );

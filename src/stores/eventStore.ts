@@ -2,19 +2,21 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 export interface Event {
-  id: string
+  id: any
   title: string
-  description: string
-  date: string
-  time: string
-  location: string
-  isFavorite: boolean
-  price: number
-  image: string
-  category: 'music' | 'tech' | 'sports' | 'all'
-  status: 'active' | 'inactive' | 'completed'
-  sales: number
-  capacity: number
+  description?: string
+  date?: string
+  time?: string
+  location?: string
+  isFavorite?: boolean
+  price?: number
+  image?: string
+  organizer: string
+  //category: 'music' | 'tech' | 'sports' | 'all' | 'technology' | 'Technologie' | 'Musique'
+  category: string
+  status: 'active' | 'inactive' | 'completed' | 'published' | 'draft'
+  sales?: number
+  capacity?: number
 }
 
 interface EventState {
@@ -91,8 +93,8 @@ export const useEventStore = create<EventState>()(
         if (searchQuery) {
           filtered = filtered.filter((event) =>
             event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            event.location.toLowerCase().includes(searchQuery.toLowerCase())
+            event.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            event.location?.toLowerCase().includes(searchQuery.toLowerCase())
           )
         }
 
