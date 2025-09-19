@@ -3,6 +3,7 @@ import Header from './AdminHeader';
 import Sidebar from './AdminSidebar';
 import Footer from './AdminFooter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarStateProvider } from '@/contexts/SidebarContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -30,13 +31,18 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTitle }) => {
         </style>
 
         <div className="flex h-full grow flex-row">
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto">
-            <SidebarTrigger />
-            <Header title={pageTitle} />
-            {children}
-            <Footer />
-          </main>
+          <SidebarStateProvider
+            defaultSelectedItem="dashboard"
+            defaultOpen={true}
+          >
+            <Sidebar />
+            <main className="flex-1 bg-event-background overflow-y-auto">
+              <SidebarTrigger />
+              <Header title={pageTitle} />
+              {children}
+              <Footer />
+            </main>
+          </SidebarStateProvider>
         </div>
       </div>
     </SidebarProvider>

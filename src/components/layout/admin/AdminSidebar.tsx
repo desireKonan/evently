@@ -22,9 +22,11 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EventlyLogo } from '@/components/icons/EventlyLogo';
+import { Link } from 'react-router-dom';
+import { useSidebarSelection } from '@/contexts/SidebarContext';
 
 interface NavItem {
-  id: number;
+  id: string;
   title: string;
   icon: JSX.Element;
   active: boolean;
@@ -34,16 +36,17 @@ interface NavItem {
 
 const AdminSidebar: React.FC = () => {
   const navItems: NavItem[] = [
-    { id: 1, title: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, active: true, url: "/explore" },
-    { id: 2, title: "Événements", icon: <Calendar className="h-5 w-5" />, active: false, url: "#" },
-    { id: 3, title: "Utilisateurs", icon: <Users className="h-5 w-5" />, active: false, url: "#" },
-    { id: 4, title: "Organisateurs", icon: <Building className="h-5 w-5" />, active: false, url: "#" },
-    { id: 5, title: "Catégories", icon: <Tag className="h-5 w-5" />, active: false, url: "#" },
-    { id: 6, title: "Paramètres", icon: <Settings className="h-5 w-5" />, active: false, url: "#" }
+    { id: 'dashboard', title: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, active: true, url: "/explore" },
+    { id: 'event', title: "Événements", icon: <Calendar className="h-5 w-5" />, active: false, url: "#" },
+    { id: 'user', title: "Utilisateurs", icon: <Users className="h-5 w-5" />, active: false, url: "#" },
+    { id: 'organizer', title: "Organisateurs", icon: <Building className="h-5 w-5" />, active: false, url: "#" },
+    { id: 'category', title: "Catégories", icon: <Tag className="h-5 w-5" />, active: false, url: "#" },
+    { id: 'settings', title: "Paramètres", icon: <Settings className="h-5 w-5" />, active: false, url: "#" }
   ];
+  const { selectedItem, setSelectedItem } = useSidebarSelection();
 
   return (
-    <Sidebar variant="sidebar">
+    <Sidebar variant="sidebar" className="bg-white">
       <SidebarHeader>
         <div className="flex items-center space-x-2 m-4 ">
           <EventlyLogo />
@@ -55,12 +58,12 @@ const AdminSidebar: React.FC = () => {
           <SidebarGroupContent>
             <SidebarMenu className="flex flex-col gap-2">
               {navItems.map((item) => (
-                <SidebarMenuItem key={item.title} className="flex items-center gap-3 rounded-full px-3 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                <SidebarMenuItem key={item.title} className={selectedItem === item.id ? "flex items-center gap-3 rounded-full bg-event-primary px-3 py-2 text-white active:bg-event-primary" :  "flex items-center gap-3 rounded-full px-3 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800"}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url} onClick={ () => setSelectedItem(item.id) }>
                       {item.icon}
                       <span className="text-sm font-medium">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

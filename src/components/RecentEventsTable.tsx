@@ -19,7 +19,7 @@ const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }: RecentE
   return (
     <div className="mt-10">
       <h2 className="text-xl font-bold text-foreground mb-4">Événements récents</h2>
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-white">
         <Table>
           <TableHeader>
             <TableRow>
