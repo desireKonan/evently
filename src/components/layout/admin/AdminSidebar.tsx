@@ -1,13 +1,14 @@
 // components/layout/AdminSidebar.tsx
-import { 
-  SidebarContent, 
-  SidebarGroup, 
-  Sidebar, 
-  SidebarGroupContent, 
-  SidebarGroupLabel, 
-  SidebarMenu, 
-  SidebarMenuButton, 
-  SidebarMenuItem 
+import {
+  SidebarContent,
+  SidebarGroup,
+  Sidebar,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+  SidebarHeader
 } from '@/components/ui/sidebar';
 import React, { type JSX } from 'react';
 import {
@@ -16,8 +17,11 @@ import {
   Users,
   Building,
   Tag,
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { EventlyLogo } from '@/components/icons/EventlyLogo';
 
 interface NavItem {
   id: number;
@@ -30,7 +34,7 @@ interface NavItem {
 
 const AdminSidebar: React.FC = () => {
   const navItems: NavItem[] = [
-    { id: 1, title: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, active: true, url: "#" },
+    { id: 1, title: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, active: true, url: "/explore" },
     { id: 2, title: "Événements", icon: <Calendar className="h-5 w-5" />, active: false, url: "#" },
     { id: 3, title: "Utilisateurs", icon: <Users className="h-5 w-5" />, active: false, url: "#" },
     { id: 4, title: "Organisateurs", icon: <Building className="h-5 w-5" />, active: false, url: "#" },
@@ -39,18 +43,23 @@ const AdminSidebar: React.FC = () => {
   ];
 
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar">
+      <SidebarHeader>
+        <div className="flex items-center space-x-2 m-4 ">
+          <EventlyLogo />
+          <span className="font-semibold"> Evently </span>
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="flex flex-col gap-2">
               {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="flex items-center gap-3 rounded-full px-3 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800">
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
-                      { item.icon } 
-                      <span>{item.title}</span>
+                      {item.icon}
+                      <span className="text-sm font-medium">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -59,6 +68,21 @@ const AdminSidebar: React.FC = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <div className="flex items-center gap-3 rounded-full bg-gray-100 p-2">
+          <div
+            className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+            style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuCfimSwHikVoC7UwmMoZ674nuzfUwX6XiA6dHXUC2EH7Pbk9_vGxLjryQ-sIxEmZ4QE_ys62vijpgoO9xYg5pOy8g7mTaWhtL_FofZ3lYOtf0zUe1Ub_aBt9vIAR43-NhrAUByLP1h5Bt-6NLnJU3KJGcGqKj6d1MNIO4k3-PGEhZP0aQEaTHINIOv5IeZFVLnRTlzFG6DQRWu3_6XceYfpX029ldCuTCl0bsGp-geSH28uB4H9agtXFZTDzwckSK2P4F4wq9c3Ckw")` }}
+          />
+          <div className="flex flex-col">
+            <p className="text-sm font-medium text-gray-800">Admin User</p>
+            <p className="text-xs text-gray-500">admin@evently.com</p>
+          </div>
+          <Button variant="ghost" className="ml-auto text-gray-500 hover:text-gray-800 transition-colors p-1">
+              <LogOut className="w-5" />
+          </Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 };
