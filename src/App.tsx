@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import DashboardPage from './pages/admin/DashboardPage'
-import EventFormPage from './pages/admin/EventFormPage'
+import EventFormPage from './pages/admin/event/EventFormPage'
 import EventDetailPage from './pages/client/EventDetailPage'
 import LoginPage from './pages/shared/LoginPage'
 import CalendarPage from './pages/admin/FullCalendarPage'

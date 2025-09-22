@@ -4,6 +4,7 @@ import Sidebar from './AdminSidebar';
 import Footer from './AdminFooter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { SidebarStateProvider } from '@/contexts/SidebarContext';
+import { useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,8 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, pageTitle }) => {
+  const navigate = useNavigate();
+
   return (
     <SidebarProvider>
       <div className="relative flex size-full min-h-screen flex-col overflow-x-hidden"
@@ -38,7 +41,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTitle }) => {
             <Sidebar />
             <main className="flex-1 bg-event-background overflow-y-auto">
               <SidebarTrigger />
-              <Header title={pageTitle} />
+              <Header title={pageTitle} onButtonClick={() => navigate("/create/event")} />
               {children}
               <Footer />
             </main>

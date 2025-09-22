@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
 import StatCard from '@/components/StatCard';
 import RecentEventsTable from '@/components/RecentEventsTable';
@@ -24,6 +24,8 @@ export interface StatCardData {
 
 const Dashboard: React.FC = () => {
   // Données pour les cartes de statistiques
+  const [activeTab, setActiveTab] = useState("all");
+
   const statCards: Partial<StatCardData>[] = [
     {
       id: 1,
@@ -53,7 +55,7 @@ const Dashboard: React.FC = () => {
       icon: "label",
       color: "text-[var(--primary-color)]"
     }
-  ];
+  ]; 
 
   const handleCreateEvent = () => {
     // Logique pour créer un événement
