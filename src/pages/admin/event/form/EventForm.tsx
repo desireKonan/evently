@@ -92,7 +92,6 @@ const EventForm: React.FC = () => {
             </div>
 
             <div>
-
                 <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
                     Date
                 </label>
@@ -167,28 +166,6 @@ const EventForm: React.FC = () => {
                     onCategoriesChange={handleCategoriesChange}
                     initialCategories={[]}
                 />
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="price">
-                    Prix
-                </label>
-                <div className="relative mt-2 rounded-md shadow-sm">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span className="text-gray-500 sm:text-sm">€</span>
-                    </div>
-                    <Input
-                        id="price"
-                        name="price"
-                        placeholder="25.00"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        className="block w-full rounded-xl border-0 bg-white py-3 pl-7 pr-4 text-event-foreground ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
-                    />
-                </div>
             </div>
 
             <div>

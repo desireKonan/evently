@@ -1,4 +1,5 @@
 // components/CategoricalPricing.tsx
+import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, Trash } from 'lucide-react';
 import React, { useState } from 'react';
 
 // Types
@@ -91,17 +92,17 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       {/* En-tête */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-base font-bold text-event-foreground dark:text-white">
             Tarification Catégorielle
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-event-foreground dark:text-gray-400 mt-1">
             Configurez les différentes catégories de prix pour votre événement
           </p>
         </div>
         
         <button
           onClick={addCategory}
-          className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+          className="bg-event-primary hover:bg-event-primary/90 text-sm text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
         >
           Ajouter une catégorie
         </button>
@@ -122,23 +123,6 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
             onBlur={() => setIsAdding(false)}
           />
         ))}
-
-        {categories.length === 0 && (
-          <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-            <div className="text-gray-400 dark:text-gray-500 mb-3">
-              <span className="material-symbols-outlined text-4xl">price_change</span>
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Aucune catégorie de prix définie
-            </p>
-            <button
-              onClick={addCategory}
-              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium"
-            >
-              Créer votre première catégorie
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Résumé */}
@@ -152,13 +136,13 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {Math.min(...categories.map(c => c.price))}€
+                {Math.min(...categories.map(c => c.price))} FCFA
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Prix minimum</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">
-                {Math.max(...categories.map(c => c.price))}€
+                {Math.max(...categories.map(c => c.price))} FCFA
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Prix maximum</div>
             </div>
@@ -226,7 +210,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30"
               title="Déplacer vers le haut"
             >
-              <span className="material-symbols-outlined">arrow_upward</span>
+              <ArrowUp />
             </button>
             
             <button
@@ -235,7 +219,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30"
               title="Déplacer vers le bas"
             >
-              <span className="material-symbols-outlined">arrow_downward</span>
+              <ArrowDown />
             </button>
             
             <button
@@ -243,16 +227,14 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600"
               title="Supprimer la catégorie"
             >
-              <span className="material-symbols-outlined">delete</span>
+              <Trash />
             </button>
             
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <span className="material-symbols-outlined">
-                {isExpanded ? 'expand_less' : 'expand_more'}
-              </span>
+              {isExpanded ? <ChevronDown /> : <ChevronUp />}
             </button>
           </div>
         </div>
@@ -264,7 +246,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               {/* Prix */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Prix (€)
+                  Prix (FCFA)
                 </label>
                 <input
                   type="number"
