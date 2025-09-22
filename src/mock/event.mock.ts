@@ -1,4 +1,4 @@
-import type { Event } from "@/stores/eventStore";
+import type { Event } from "@/app/model/event.model";
 
 export const recentEvents: Event[] = [
     {

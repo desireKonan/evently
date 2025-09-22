@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import DashboardPage from './pages/admin/DashboardPage'
 import EventFormPage from './pages/admin/event/EventFormPage'
 import EventDetailPage from './pages/client/EventDetailPage'
+import UserListPage from './pages/admin/user/UserListPage'
 import EventListPage from './pages/admin/event/EventListPage'
 import LoginPage from './pages/shared/LoginPage'
 import CalendarPage from './pages/admin/FullCalendarPage'
@@ -31,6 +32,7 @@ function App() {
             <Route path="/create/event" element={<EventFormPage />} />
             <Route path="/event/:id" element={<EventDetailPage />} />
             <Route path="/admin/events" element={<EventListPage />} />
+            <Route path="/admin/users" element={<UserListPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/calendar-event" element={<CalendarPage />} />
             <Route path="/confirmation" element={<ConfirmationPayment />} />
