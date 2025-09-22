@@ -2,10 +2,10 @@ import React, { useActionState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from '@/components/layout/client/EventLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
-import EventForm from './EventForm';
-import SubEventsForm from './SubEventsForm';
-import CodeQrVisualizer from './CodeQrVisualizer';
-import BadgeVisualizer from './BadgeVisualizer';
+import EventForm from './form/EventForm';
+import SubEventsForm from './form/SubEventsForm';
+import CodeQrVisualizer from './form/CodeQrVisualizer';
+import BadgeVisualizer from './form/BadgeVisualizer';
 
 const EventFormPage: React.FC = () => {
   const [error, submitAction, isPending] = useActionState(
@@ -15,6 +15,7 @@ const EventFormPage: React.FC = () => {
     },
     null,
   );
+  
 
   return (
     <Layout>

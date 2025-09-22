@@ -1,9 +1,9 @@
 import { useState } from "react";
-import EnhancedBadge from "./EnhancedBadge";
+import EnhancedBadge from "../components/EnhancedBadge";
 import { SAMPLE_EVENTS, SAMPLE_PARTICIPANTS } from "@/mock/event.mock";
 
 const BadgeVisualizer: React.FC = () => {
-     const [selectedEvent, setSelectedEvent] = useState(SAMPLE_EVENTS[0]);
+  const [selectedEvent, setSelectedEvent] = useState(SAMPLE_EVENTS[0]);
   const [selectedParticipant, setSelectedParticipant] = useState(SAMPLE_PARTICIPANTS[0]);
   const [showQrCode, setShowQrCode] = useState(true);
 

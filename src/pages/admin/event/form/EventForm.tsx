@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react";
+import CategoricalPricing from "../components/CategorialPricing";
+import type { PriceCategory } from "@/hooks/use-pricing-categories";
 
 const EventForm: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +15,14 @@ const EventForm: React.FC = () => {
         price: '',
         image: null as File | null
     });
+
+    const [pricingCategories, setPricingCategories] = useState<PriceCategory[]>([]);
+
+    const handleCategoriesChange = (categories: PriceCategory[]) => {
+        setPricingCategories(categories);
+        console.log('Catégories mises à jour:', categories);
+    };
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -81,17 +91,35 @@ const EventForm: React.FC = () => {
                 </div>
             </div>
 
+            <div>
+
+                <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
+                    Date
+                </label>
+                <div className="mt-2">
+                    <Input
+                        id="date"
+                        name="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={handleInputChange}
+                        className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
+                        required
+                    />
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
                 <div>
-                    <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
-                        Date
+                    <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="time">
+                        Heure de debut
                     </label>
                     <div className="mt-2">
                         <Input
-                            id="date"
-                            name="date"
-                            type="date"
-                            value={formData.date}
+                            id="time"
+                            name="time"
+                            type="time"
+                            value={formData.time}
                             onChange={handleInputChange}
                             className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
                             required
@@ -101,7 +129,7 @@ const EventForm: React.FC = () => {
 
                 <div>
                     <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="time">
-                        Heure
+                        Heure de fin
                     </label>
                     <div className="mt-2">
                         <Input
@@ -132,6 +160,13 @@ const EventForm: React.FC = () => {
                         required
                     />
                 </div>
+            </div>
+
+            <div>
+                <CategoricalPricing
+                    onCategoriesChange={handleCategoriesChange}
+                    initialCategories={[]}
+                />
             </div>
 
             <div>
