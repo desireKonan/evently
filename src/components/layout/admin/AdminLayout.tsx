@@ -1,19 +1,16 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import Header from './AdminHeader';
 import Sidebar from './AdminSidebar';
 import Footer from './AdminFooter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { SidebarStateProvider } from '@/contexts/SidebarContext';
-import { useNavigate } from 'react-router-dom';
-
 interface LayoutProps {
   children: React.ReactNode;
   pageTitle: string;
+  buttons?: JSX.Element | null | undefined | boolean
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, pageTitle }) => {
-  const navigate = useNavigate();
-
+const Layout: React.FC<LayoutProps> = ({ children, pageTitle, buttons }) => {
   return (
     <SidebarProvider>
       <div className="relative flex size-full min-h-screen flex-col overflow-x-hidden"
@@ -41,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children, pageTitle }) => {
             <Sidebar />
             <main className="flex-1 bg-event-background overflow-y-auto">
               <SidebarTrigger />
-              <Header title={pageTitle} onButtonClick={() => navigate("/create/event")} />
+              <Header title={pageTitle} buttons={buttons} />
               {children}
               <Footer />
             </main>

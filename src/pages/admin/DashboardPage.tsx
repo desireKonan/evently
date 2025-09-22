@@ -3,6 +3,8 @@ import Layout from "@/components/layout/admin/AdminLayout";
 import StatCard from '@/components/StatCard';
 import RecentEventsTable from '@/components/RecentEventsTable';
 import { recentEvents } from '@/mock/event.mock';
+import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 
 // Définition des types TypeScript
 export interface Event {
@@ -24,7 +26,10 @@ export interface StatCardData {
 
 const Dashboard: React.FC = () => {
   // Données pour les cartes de statistiques
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
+  const [showCreateButton, setShowCreateButton] = useState(true);
+
 
   const statCards: Partial<StatCardData>[] = [
     {
@@ -55,7 +60,7 @@ const Dashboard: React.FC = () => {
       icon: "label",
       color: "text-[var(--primary-color)]"
     }
-  ]; 
+  ];
 
   const handleCreateEvent = () => {
     // Logique pour créer un événement
@@ -63,7 +68,17 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <Layout pageTitle="Tableau de bord">
+    <Layout pageTitle="Tableau de bord" buttons={
+      showCreateButton && (
+        <button
+          onClick={() => navigate('/create/event')}
+          className="flex items-center gap-2 rounded-full bg-[var(--secondary-color)] px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+        >
+          <Plus />
+          <span> Créer un événement </span>
+        </button>
+      )
+    }>
       <div className="p-10">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -76,7 +91,7 @@ const Dashboard: React.FC = () => {
             />
           ))}
         </div>
-        
+
         {/* Recent Events Table */}
         <RecentEventsTable events={recentEvents} />
       </div>
