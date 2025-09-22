@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
-import StatCard from '@/components/StatCard';
 import { recentEvents } from '@/mock/event.mock';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { DataTable } from '@/components/shared/DataTable';
 import { columns } from './components/table/columns';
-import { DataTablePagination } from '@/components/shared/DataTablePagination';
 
 // Définition des types TypeScript
 export interface Event {
@@ -26,15 +24,12 @@ export interface StatCardData {
   color: string;
 }
 
-const Events: React.FC = () => {
-  // Données pour les cartes de statistiques
+const EventList: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("all");
-  const [showCreateButton, setShowCreateButton] = useState(true);
 
   return (
-    <Layout pageTitle="Tableau de bord" buttons={
-      showCreateButton && (
+    <Layout pageTitle="Liste des événements" buttons={
+      (
         <button
           onClick={() => navigate('/create/event')}
           className="flex items-center gap-2 rounded-full bg-[var(--secondary-color)] px-4 py-2 text-sm font-bold text-white hover:opacity-90"
@@ -57,4 +52,4 @@ const Events: React.FC = () => {
   );
 };
 
-export default Events;
+export default EventList;
