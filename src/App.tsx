@@ -5,6 +5,7 @@ import EventFormPage from './pages/admin/event/EventFormPage'
 import EventDetailPage from './pages/client/EventDetailPage'
 import UserListPage from './pages/admin/user/UserListPage'
 import EventListPage from './pages/admin/event/EventListPage'
+import ParticipantListPage from './pages/admin/participant/ParticipantListPage'
 import LoginPage from './pages/shared/LoginPage'
 import CalendarPage from './pages/admin/FullCalendarPage'
 import ConfirmationPayment from './pages/client/ConfirmationPage'
@@ -33,6 +34,7 @@ function App() {
             <Route path="/event/:id" element={<EventDetailPage />} />
             <Route path="/admin/events" element={<EventListPage />} />
             <Route path="/admin/users" element={<UserListPage />} />
+            <Route path="/admin/participants" element={<ParticipantListPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/calendar-event" element={<CalendarPage />} />
             <Route path="/confirmation" element={<ConfirmationPayment />} />
