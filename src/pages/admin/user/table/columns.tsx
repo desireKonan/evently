@@ -24,7 +24,7 @@ export const columns: ColumnDef<User>[] = [
     },
     {
         accessorKey: "actions",
-        header: () => <div className="text-right"> Actions </div>,
+        header: () => <div className="text-center"> Actions </div>,
         cell: () => {
             return (
                 <Button variant="ghost" size="sm">

@@ -1,8 +1,8 @@
 "use client"
 
+import type { Event } from "@/app/model/event.model";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Event } from "@/stores/eventStore"
 import type { ColumnDef } from "@tanstack/react-table"
 
 // This type is used to define the shape of our data.
@@ -36,7 +36,7 @@ export const columns: ColumnDef<Event>[] = [
     },
     {
         accessorKey: "actions",
-        header: () => <div className="text-right"> Actions </div>,
+        header: () => <div className="text-left"> Actions </div>,
         cell: ({ row }) => {
             return (
                 <Button variant="ghost" size="sm">

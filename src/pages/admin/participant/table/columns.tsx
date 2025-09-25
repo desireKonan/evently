@@ -98,10 +98,8 @@ export const columns: ColumnDef<Participant>[] = [
     },
     {
         id: "actions",
-        header: () => <div className="text-right">Actions</div>,
-        cell: ({ row }) => {
-            const participant = row.original;
-            
+        header: () => <div className="text-center">Actions</div>,
+        cell: () => {
             return (
                 <div className="flex justify-end gap-2">
                     <Button variant="outline" size="sm">
