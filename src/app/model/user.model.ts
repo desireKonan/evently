@@ -4,6 +4,7 @@ export type User = {
     lastname: string,
     email: string,
     phoneNumber: string,
-    verifiedAt?: string | null,
-    createDate: Date
+    verifiedAt?: string | undefined,
+    createdAt: Date,
+    updatedAt?: Date | undefined
 }

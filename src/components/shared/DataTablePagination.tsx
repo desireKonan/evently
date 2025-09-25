@@ -6,7 +6,7 @@ import {
 } from "lucide-react"
 import { Button } from "../ui/button"
 import type { Table } from "@tanstack/react-table"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select"
+//  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../ui/select"
 import { cn } from "@/lib/utils"
 
 interface DataTablePaginationProps<TData> {

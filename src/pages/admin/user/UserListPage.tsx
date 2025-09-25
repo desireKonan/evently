@@ -7,6 +7,7 @@ import { SAMPLE_USERS } from '@/mock/user.mock';
 import { Button } from '@/components/ui/button';
 import { useModal } from '@/hooks/use-modal';
 import { CustomDialogForm } from '@/components/shared/CustomDialogForm';
+import { UserForm } from './form/UserForm';
 
 const UserList: React.FC = () => {
   // Données pour les cartes de statistiques
@@ -33,7 +34,14 @@ const UserList: React.FC = () => {
           </div>
         </div>
         <div>
-          <CustomDialogForm title='Formulaire des utilisateurs' description='Ajouter un utilisateur' open={isOpen} onClose={toggleModal} />
+          <CustomDialogForm 
+            title='Formulaire des utilisateurs' 
+            description='Ajouter un utilisateur' 
+            open={isOpen} 
+            onClose={toggleModal}
+          >
+            <UserForm />
+          </CustomDialogForm>
         </div>
       </div>
     </Layout>
