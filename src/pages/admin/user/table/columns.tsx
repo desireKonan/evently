@@ -19,17 +19,13 @@ export const columns: ColumnDef<User>[] = [
         header: "Email",
     },
     {
-        accessorKey: "phone-number",
-        header: "phoneNumber",
-    },
-    {
         accessorKey: "phoneNumber",
         header: "Numero de telephone",
     },
     {
         accessorKey: "actions",
         header: () => <div className="text-right"> Actions </div>,
-        cell: ({ row }) => {
+        cell: () => {
             return (
                 <Button variant="ghost" size="sm">
                     Éditer

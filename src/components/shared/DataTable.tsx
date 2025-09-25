@@ -34,20 +34,22 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="overflow-hidden rounded-md border">
-        <Table>
+      <div className="rounded-md border border-spacing-[10px] border-collapse">
+        <Table className="table-auto xl:table-auto m-5">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    <TableHead key={header.id} className="min-w-60">
+                      {
+                        header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )
+                      }
                     </TableHead>
                   )
                 })}
@@ -62,7 +64,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="min-w-60">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -78,9 +80,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-end">
-          <DataTablePagination table={table} />
-      </div>
+      <DataTablePagination className="m-3" table={table} />
     </div>
   )
 }

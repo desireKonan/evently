@@ -15,10 +15,10 @@ import {
   LayoutDashboard,
   Calendar,
   Users,
-  Building,
   Tag,
   Settings,
-  LogOut
+  LogOut,
+  Users2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EventlyLogo } from '@/components/icons/EventlyLogo';
@@ -38,11 +38,12 @@ const AdminSidebar: React.FC = () => {
   const navItems: NavItem[] = [
     { id: 'dashboard', title: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" />, active: true, url: "/explore" },
     { id: 'events', title: "Événements", icon: <Calendar className="h-5 w-5" />, active: false, url: "/admin/events" },
-    { id: 'user', title: "Utilisateurs", icon: <Users className="h-5 w-5" />, active: false, url: "#" },
-    { id: 'organizer', title: "Organisateurs", icon: <Building className="h-5 w-5" />, active: false, url: "#" },
+    { id: 'user', title: "Utilisateurs", icon: <Users className="h-5 w-5" />, active: false, url: "/admin/users" },
+    { id: 'participant', title: "Participants", icon: <Users2 className="h-5 w-5" />, active: false, url: "/admin/participants" },
     { id: 'category', title: "Catégories", icon: <Tag className="h-5 w-5" />, active: false, url: "#" },
     { id: 'settings', title: "Paramètres", icon: <Settings className="h-5 w-5" />, active: false, url: "#" }
   ];
+
   const { selectedItem, setSelectedItem } = useSidebarSelection();
 
   return (

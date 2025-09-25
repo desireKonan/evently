@@ -1,6 +1,8 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import type { Event } from '@/stores/eventStore'
+import { HeartCrackIcon } from 'lucide-react'
+import type { Event } from '@/app/model/event.model'
+
 
 interface EventCardProps {
   event: Event
@@ -16,9 +18,7 @@ export function EventCard({ event, onToggleFavorite }: EventCardProps) {
         className="absolute top-2 right-2 z-10 rounded-full bg-event-background/50 backdrop-blur-sm text-muted-foreground hover:text-event-accent"
         onClick={() => onToggleFavorite(event.id)}
       >
-        <span className={`material-symbols-outlined ${event.isFavorite ? 'text-event-accent fill-event-accent' : ''}`}>
-          favorite
-        </span>
+        <HeartCrackIcon className={`${event.isFavorite ? 'text-event-accent fill-event-accent' : ''}`} />
       </Button>
       <div className="aspect-video overflow-hidden">
         <div 

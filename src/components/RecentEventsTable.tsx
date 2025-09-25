@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Event } from '@/stores/eventStore';
+import type { Event } from '@/app/model/event.model';
 
 interface RecentEventsTableProps {
   events: Event[];
@@ -17,10 +17,10 @@ interface RecentEventsTableProps {
 
 const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }: RecentEventsTableProps) => {
   return (
-    <div className="mt-10">
+    <div className="w-full mt-10">
       <h2 className="text-xl font-bold text-foreground mb-4">Événements récents</h2>
       <div className="rounded-md border bg-white">
-        <Table>
+        <Table className="w-screen m-2">
           <TableHeader>
             <TableRow>
               <TableHead>Nom de l'événement</TableHead>

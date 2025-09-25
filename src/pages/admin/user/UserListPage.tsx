@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import { DataTable } from '@/components/shared/DataTable';
 import { columns } from './table/columns';
 import { SAMPLE_USERS } from '@/mock/user.mock';
+import { EventlyDialog } from '@/components/shared/CustomDialog';
 
 const UserList: React.FC = () => {
   // Données pour les cartes de statistiques
@@ -12,13 +13,15 @@ const UserList: React.FC = () => {
 
   return (
     <Layout pageTitle="Liste des utilisateurs" buttons={
-      <button
-        onClick={() => navigate('/create/event')}
-        className="flex items-center gap-2 rounded-full bg-[var(--secondary-color)] px-4 py-2 text-sm font-bold text-white hover:opacity-90"
-      >
-        <Plus />
-        <span> Créer un utilisateur </span>
-      </button>
+      <>
+        <button
+          onClick={() => navigate('/create/event')}
+          className="flex items-center gap-2 rounded-full bg-[var(--secondary-color)] px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+        >
+          <Plus />
+          <span> Créer un utilisateur </span>
+        </button>
+      </>
     }>
       <div className="p-10">
         {/* Events Table */}
