@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
 import { Plus } from 'lucide-react';
@@ -8,10 +10,27 @@ import { Button } from '@/components/ui/button';
 import { useModal } from '@/hooks/use-modal';
 import { CustomDialogForm } from '@/components/shared/CustomDialogForm';
 import { UserForm } from './form/UserForm';
+import { userFormSchema, type UserFormData } from '@/app/schema/user-form.schema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod"
+
 
 const UserList: React.FC = () => {
   // Données pour les cartes de statistiques
   const { isOpen, toggleModal } = useModal();
+  const userformData = useForm<UserFormData>({
+    resolver: zodResolver(userFormSchema),
+    defaultValues: {
+      id: '',
+      firstname: '',
+      lastname: '',
+      email: '',
+      phoneNumber: '',
+      createdAt: new Date()
+    },
+    mode: 'onChange'
+  });
+
 
   return (
     <Layout pageTitle="Liste des utilisateurs" buttons={
@@ -39,8 +58,9 @@ const UserList: React.FC = () => {
             description='Ajouter un utilisateur' 
             open={isOpen} 
             onClose={toggleModal}
+            handleSubmit={userformData.handleSubmit((data) => console.log('Data submitted: ', data))}
           >
-            <UserForm />
+            <UserForm formReturn={userformData} />
           </CustomDialogForm>
         </div>
       </div>

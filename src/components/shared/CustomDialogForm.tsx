@@ -19,7 +19,7 @@ interface CustomDialogFormProps {
     cancelTitle?: string;
     variant?: 'default' | 'destructive' | 'warning';
     onClose: () => void;
-    onAction?: () => void;
+    handleSubmit?: () => void;
 }
 
 
@@ -31,12 +31,13 @@ export function CustomDialogForm({
     cancelTitle = 'Cancel',
     variant = 'default',
     onClose,
-    onAction,
+    handleSubmit,
     children,
 }: PropsWithChildren<CustomDialogFormProps>) {
 
-    const handleAction = () => {
-        onAction?.();
+    const handleAction = (event) => {
+        event.preventDefault();
+        handleSubmit?.();
     }
 
     const getVariant = (variant: string) => {
@@ -51,24 +52,28 @@ export function CustomDialogForm({
 
     return (
         <Dialog open={open}>
-            <DialogContent className="w-500 h-1/2 overflow-auto">
-                <DialogHeader>
-                    <DialogTitle> { title } </DialogTitle>
-                    <DialogDescription>
-                        { description }
-                    </DialogDescription>
-                </DialogHeader>
-                { children }
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary" onClick={onClose}>
-                            { cancelTitle }
+            <DialogContent className="min-w-[800px] md:w-full overflow-y-auto">
+                <form action={handleAction}>
+                    <DialogHeader>
+                        <DialogTitle> {title} </DialogTitle>
+                        <DialogDescription>
+                            {description}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="p-4">
+                        {children}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button type="button" variant="secondary" onClick={onClose}>
+                                {cancelTitle}
+                            </Button>
+                        </DialogClose>
+                        <Button type="submit" className={getVariant(variant)}>
+                            {actionTitle}
                         </Button>
-                    </DialogClose>
-                    <Button type="button" className={getVariant(variant)} onClick={handleAction}>
-                        {actionTitle}
-                    </Button>
-                </DialogFooter>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     );
