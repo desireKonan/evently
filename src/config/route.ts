@@ -26,8 +26,6 @@ const QRScannerPage = React.lazy(() => import('@/pages/shared/ScanPage'));
 
 // Pages de gestion
 const NotFoundPage = React.lazy(() => import('@/config/NotFound'));
-const NotResourceFoundPage = React.lazy(() => import('@/config/ResourceNotFound'));
-
 
 export const routes: RouteConfig[] = [
   // Routes publiques
