@@ -1,44 +1,98 @@
+import type { User } from '@/app/model/user.model'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
-export interface User {
-  id: string
-  name: string
-  email: string
-  avatar: string
-  role: 'organizer' | 'attendee'
-}
 
 interface AuthState {
-  user: User | null
-  isAuthenticated: boolean
-  login: (user: User) => void
-  logout: () => void
-  updateUser: (user: Partial<User>) => void
+  user: User | null;
+  token: string | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  clearError: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools(
     (set) => ({
       user: null,
+      token: null,
+      isLoading: false,
       isAuthenticated: false,
+      error: null,
+      
+      login: async (email: string, password: string) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          // Appel à votre API de connexion
+          const response = await fetch(`${process.env.VITE_EVENTLY_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          });
 
-      login: (user) => {
-        set({ user, isAuthenticated: true })
-      },
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur de connexion');
+          }
 
-      logout: () => {
-        set({ user: null, isAuthenticated: false })
-      },
+          const data = await response.json();
+          
+          // Stockage des données d'authentification
+          set({
+            user: data.user,
+            token: data.token,
+            isLoading: false,
+            error: null,
+          });
 
-      updateUser: (updatedUser) => {
-        set((state) => ({
-          user: state.user ? { ...state.user, ...updatedUser } : null,
-        }))
+          // Stockage dans le localStorage si nécessaire
+          localStorage.setItem('user', JSON.stringify(data));
+
+          set({
+            isAuthenticated: true
+          });
+          
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : 'Une erreur est survenue',
+          });
+        }
       },
+      
+      logout: async () => {
+        set({
+          user: null,
+          token: null,
+        });
+
+        const response = await fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+            }
+        });
+
+        if (response.ok) {
+          localStorage.removeItem('user');
+          
+          set({
+            isAuthenticated: false
+          });
+        }
+      },
+      
+      clearError: () => set({ error: null }),
     }),
     {
       name: 'auth-store',
     }
   )
-)
+);

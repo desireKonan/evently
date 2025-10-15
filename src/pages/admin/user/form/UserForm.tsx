@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import type { UseFormReturn } from "react-hook-form";
-import type { UserFormData } from "@/app/schema/user-form.schema";
+import type { UserFormData } from "@/app/schema/user.schema";
 
 
 interface UserFormProps {

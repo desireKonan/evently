@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useModal } from '@/hooks/use-modal';
 import { CustomDialogForm } from '@/components/shared/CustomDialogForm';
 import { UserForm } from './form/UserForm';
-import { userFormSchema, type UserFormData } from '@/app/schema/user-form.schema';
+import { userFormSchema, type UserFormData } from '@/app/schema/user.schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 
