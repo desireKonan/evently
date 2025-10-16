@@ -7,12 +7,10 @@ import { useAuthStore } from '@/stores/authStore';
 import { type LoginFormData, loginSchema } from '@/app/schema/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
   const { login, isLoading, error } = useAuthStore();
-
-  const navigate = useNavigate();
 
   const {
     register,
@@ -30,9 +28,6 @@ const LoginPage: React.FC = () => {
     try {
       // Login to the application.
       await login(data.email, data.password);
-      // Redirection après connexion réussie
-      // Comment naviguer d'une page à une autre.
-      // navigate('/dashboard');
     } catch (err) {
       // Les erreurs sont déjà gérées dans le store
       console.error('Erreur de connexion:', err);

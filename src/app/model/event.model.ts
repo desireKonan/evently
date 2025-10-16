@@ -15,3 +15,6 @@ export interface Event {
   sales?: number
   capacity?: number
 }
+
+
+export type EventType = 'CONFERENCE' | 'SEMINAR' | 'LIVING_ROOM' | 'WORKSHOP' | 'WEBINAR' | 'B2B' | 'FORUM' | 'GALA_DINNER' | 'PRIVATE_EVENING' | 'OTHER';
