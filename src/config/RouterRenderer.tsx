@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import type { RouteConfig } from './route';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
+import ResourceNotFound from './ResourceNotFound';
 
 interface RouteRendererProps {
   routes: RouteConfig[];
@@ -66,6 +67,9 @@ const RouteRenderer: React.FC<RouteRendererProps> = ({ routes }) => {
           />
         );
       })}
+      <Route path="/event-not-found" element={<ResourceNotFound resource="Événement" />} />
+      <Route path="/user-not-found" element={<ResourceNotFound resource="Utilisateur" />} />
+      <Route path="/participant-not-found" element={<ResourceNotFound resource="Participant" />} />
     </Routes>
   );
 };

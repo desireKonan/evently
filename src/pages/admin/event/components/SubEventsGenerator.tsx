@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, ChevronUp, ChevronDown, Edit3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useEventStore } from '@/stores/eventStore';
 
 interface SubEventsGeneratorProps {
   onSubEventsChange?: (subEvents: string[]) => void;
@@ -15,6 +16,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
 }) => {
   const [subEvents, setSubEvents] = useState<string[]>(initialSubEvents);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const { addSubEvent, removeSubEvent, updateSubEvent, subEvents: _subEvents } = useEventStore();
 
   // Notifier le parent des changements
   const notifyParent = (newSubEvents: string[]) => {
@@ -38,6 +40,11 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
     const newSubEvents = [...subEvents];
     newSubEvents[index] = value;
     updateSubEvents(newSubEvents);
+    if(_subEvents.includes(value)) {
+      updateSubEvent(index, value);
+    } else {
+      addSubEvent(value);
+    }
   };
 
   const handleRemoveSubEvent = (index: number) => {
@@ -49,6 +56,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
     } else if (editingIndex && editingIndex > index) {
       setEditingIndex(editingIndex - 1);
     }
+    removeSubEvent(index);
   };
 
   const handleMoveSubEvent = (index: number, direction: 'up' | 'down') => {
@@ -129,6 +137,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
             </p>
             <Button
               onClick={handleAddSubEvent}
+              type="button"
               className="bg-event-primary hover:bg-event-primary/90 text-white"
             >
               Ajouter le premier sous-événement

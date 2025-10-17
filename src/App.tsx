@@ -35,13 +35,6 @@ function App() {
         <div className="min-h-screen bg-background">
           <Suspense fallback={<GlobalLoader />}>
             <RouteRenderer routes={routes} />
-
-            {/* Routes supplémentaires pour les pages d'erreur */}
-            <Routes>
-              <Route path="/event-not-found" element={<ResourceNotFound resource="Événement" />} />
-              <Route path="/user-not-found" element={<ResourceNotFound resource="Utilisateur" />} />
-              <Route path="/participant-not-found" element={<ResourceNotFound resource="Participant" />} />
-            </Routes>
           </Suspense>
           {/* <Route path="/" element={<LandingPage />} />
             <Route path="/explore" element={<LandingPage />} />

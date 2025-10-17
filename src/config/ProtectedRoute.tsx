@@ -49,7 +49,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  if (requiredRole && requiredRole.some(role => user?.role == role)) {
+  if (requiredRole && !requiredRole.some(role => user?.role == role)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-event-background">
         <div className="text-center p-8 max-w-md">

@@ -7,6 +7,7 @@ import type { PriceTicket } from '@/app/schema/event.schema';
 // Types basés sur PriceTicket
 interface PriceCategory extends Omit<PriceTicket, 'price'> {
   id: string;
+  index: number;
   price: number;
   capacity?: number;
   color: string;
@@ -27,7 +28,8 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
   onCategoriesChange,
   initialCategories = []
 }) => {
-  const { currentEvent } = useEventStore();
+  const { currentEvent, addTicketPrices, updateTicketPrices, removeTicketPrices } = useEventStore();
+  const [count, setCount] = useState<number>(0);
   
   // Initialiser les catégories depuis les props ou le store
   const initializeCategories = (): PriceCategory[] => {
@@ -35,6 +37,7 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       return initialCategories.map((cat, index) => ({
         ...cat,
         id: cat.name + index,
+        index,
         color: PREDEFINED_COLORS[index % PREDEFINED_COLORS.length],
         capacity: (cat as any).capacity
       }));
@@ -44,6 +47,7 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       return currentEvent.ticket_prices.map((cat, index) => ({
         ...cat,
         id: cat.name + index,
+        index,
         color: PREDEFINED_COLORS[index % PREDEFINED_COLORS.length],
         capacity: (cat as any).capacity
       }));
@@ -74,6 +78,13 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
   const updateCategories = (newCategories: PriceCategory[]) => {
     setCategories(newCategories);
     notifyChanges(newCategories);
+    newCategories.forEach((category, index) => {
+      updateTicketPrices(index, {
+        name: category.name,
+        description: category.description || '',
+        price: category.price
+      });
+    })
   };
 
   // Ajouter une nouvelle catégorie
@@ -83,13 +94,20 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       name: '',
       price: 0,
       description: '',
+      index: count,
       capacity: undefined,
       color: PREDEFINED_COLORS[categories.length % PREDEFINED_COLORS.length]
     };
+    setCount(count + 1);
     
     const newCategories = [...categories, newCategory];
     updateCategories(newCategories);
     setIsAdding(true);
+    addTicketPrices({
+      name: newCategory.name,
+      description: newCategory.description || '',
+      price: newCategory.price
+    })
   };
 
   // Mettre à jour une catégorie
@@ -98,12 +116,20 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       cat.id === id ? { ...cat, [field]: value } : cat
     );
     updateCategories(newCategories);
+    newCategories.forEach((category) => {
+      updateTicketPrices(category.index, {
+        name: category.name,
+        description: category.description || '',
+        price: category.price
+      })
+    })
   };
 
   // Supprimer une catégorie
-  const removeCategory = (id: string) => {
+  const removeCategory = (id: string, index: number) => {
     const newCategories = categories.filter(cat => cat.id !== id);
     updateCategories(newCategories);
+    removeTicketPrices(index);
   };
 
   // Réorganiser les catégories
@@ -152,7 +178,7 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
             index={index}
             totalCategories={categories.length}
             onUpdate={(field, value) => updateCategory(category.id, field, value)}
-            onRemove={() => removeCategory(category.id)}
+            onRemove={() => removeCategory(category.id, index)}
             onMove={moveCategory}
             isEditing={isAdding && index === categories.length - 1}
             onBlur={() => setIsAdding(false)}
