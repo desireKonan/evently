@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Event } from '@/app/model/event.model';
+import type { EventDto } from '@/app/model/event.model';
 
 interface RecentEventsTableProps {
-  events: Event[];
+  events: EventDto[];
 }
 
 const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }: RecentEventsTableProps) => {

@@ -1,7 +1,6 @@
-import { useSubEventsStore } from "@/stores/subEventStore";
+import { useEventStore } from "@/stores/eventStore";
 import SubEventsGenerator from "../components/SubEventsGenerator";
 import type { EventFormData } from "@/app/schema/event.schema";
-import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
 interface SubEventsFormProps {
@@ -9,24 +8,16 @@ interface SubEventsFormProps {
 }
 
 const SubEventsForm: React.FC<SubEventsFormProps> = ({ form }) => {
-    const { setValue, getValues } = form;
-    const { subEvents, setSubEvents } = useSubEventsStore();
+    const { setValue } = form;
+    const { subEvents, setSubEvents } = useEventStore();
 
     const handleSubEventsChange = (events: string[]) => {
         setValue('sub_events', events, { shouldValidate: true });
+        setSubEvents(events);
     };
-
-    // Initialiser avec les valeurs existantes du formulaire
-    useEffect(() => {
-        const existingSubEvents = getValues('sub_events');
-        if (existingSubEvents && Array.isArray(existingSubEvents)) {
-            setSubEvents(existingSubEvents);
-        }
-    }, []);
-
+    
     return (
         <div className="space-y-6">
-            {/* Gestion des sous-événements */}
             <div className="mb-8">
                 <SubEventsGenerator
                     onSubEventsChange={handleSubEventsChange}
@@ -36,6 +27,5 @@ const SubEventsForm: React.FC<SubEventsFormProps> = ({ form }) => {
         </div>
     );
 };
-
 
 export default SubEventsForm;

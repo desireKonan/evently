@@ -3,6 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import CategoricalPricing from "../components/CategorialPricing";
 import { type UseFormReturn } from "react-hook-form";
 import { eventTypeOptions, type EventFormData } from "@/app/schema/event.schema";
+import { useEventStore } from "@/stores/eventStore";
 
 interface EventFormProps {
     form: UseFormReturn<EventFormData>;
@@ -11,6 +12,7 @@ interface EventFormProps {
 
 const EventForm: React.FC<EventFormProps> = ({ form }) => {
     const { register, formState: { errors }, setValue, watch } = form;
+    const { currentEvent } = useEventStore();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -25,6 +27,17 @@ const EventForm: React.FC<EventFormProps> = ({ form }) => {
 
     const imageFile = watch('images');
     const type = watch('type');
+
+    // Récupérer les catégories initiales depuis le store ou le formulaire
+    const getInitialCategories = () => {
+        // Priorité au store
+        if (currentEvent?.ticket_prices) {
+            return currentEvent.ticket_prices;
+        }
+        // Fallback au formulaire
+        const formCategories = watch('ticket_prices');
+        return formCategories || [];
+    };
 
 
     return (
@@ -199,11 +212,11 @@ const EventForm: React.FC<EventFormProps> = ({ form }) => {
             <div>
                 <CategoricalPricing
                     onCategoriesChange={handleCategoriesChange}
-                    initialCategories={[]}
+                    initialCategories={getInitialCategories()}
                 />
                 {errors.ticket_prices && (
                     <p className="mt-1 text-sm text-red-600">{errors.ticket_prices.message}</p>
-                )}pricingCategories
+                )}
             </div>
 
             <div>

@@ -1,34 +1,80 @@
 // components/CategoricalPricing.tsx
 import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, Trash } from 'lucide-react';
 import React, { useState } from 'react';
+import { useEventStore } from '@/stores/eventStore';
+import type { PriceTicket } from '@/app/schema/event.schema';
 
-// Types
-interface PriceCategory {
+// Types basés sur PriceTicket
+interface PriceCategory extends Omit<PriceTicket, 'price'> {
   id: string;
-  name: string;
   price: number;
-  description: string;
   capacity?: number;
   color: string;
 }
 
 interface CategoricalPricingProps {
-  onCategoriesChange?: (categories: PriceCategory[]) => void;
-  initialCategories?: PriceCategory[];
+  onCategoriesChange?: (categories: PriceTicket[]) => void;
+  initialCategories?: PriceTicket[];
 }
+
+// Couleurs prédéfinies pour les catégories
+const PREDEFINED_COLORS = [
+  '#0fa985', '#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6',
+  '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
+];
 
 const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
   onCategoriesChange,
   initialCategories = []
 }) => {
-  const [categories, setCategories] = useState<PriceCategory[]>(initialCategories);
+  const { currentEvent } = useEventStore();
+  
+  // Initialiser les catégories depuis les props ou le store
+  const initializeCategories = (): PriceCategory[] => {
+    if (initialCategories.length > 0) {
+      return initialCategories.map((cat, index) => ({
+        ...cat,
+        id: cat.name + index,
+        color: PREDEFINED_COLORS[index % PREDEFINED_COLORS.length],
+        capacity: (cat as any).capacity
+      }));
+    }
+    
+    if (currentEvent?.ticket_prices && currentEvent.ticket_prices.length > 0) {
+      return currentEvent.ticket_prices.map((cat, index) => ({
+        ...cat,
+        id: cat.name + index,
+        color: PREDEFINED_COLORS[index % PREDEFINED_COLORS.length],
+        capacity: (cat as any).capacity
+      }));
+    }
+    
+    return [];
+  };
+
+  const [categories, setCategories] = useState<PriceCategory[]>(initializeCategories);
   const [isAdding, setIsAdding] = useState(false);
 
-  // Couleurs prédéfinies pour les catégories
-  const PREDEFINED_COLORS = [
-    '#0fa985', '#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6',
-    '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
-  ];
+  // Convertir PriceCategory vers PriceTicket
+  const convertToPriceTicket = (category: PriceCategory): PriceTicket => {
+    return {
+      name: category.name,
+      description: category.description,
+      price: category.price
+    };
+  };
+
+  // Notifier le parent des changements
+  const notifyChanges = (newCategories: PriceCategory[]) => {
+    const priceTickets: PriceTicket[] = newCategories.map(convertToPriceTicket);
+    onCategoriesChange?.(priceTickets);
+  };
+
+  // Gestionnaire central pour les mises à jour
+  const updateCategories = (newCategories: PriceCategory[]) => {
+    setCategories(newCategories);
+    notifyChanges(newCategories);
+  };
 
   // Ajouter une nouvelle catégorie
   const addCategory = () => {
@@ -41,32 +87,23 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       color: PREDEFINED_COLORS[categories.length % PREDEFINED_COLORS.length]
     };
     
-    setCategories(prev => {
-      const newCategories = [...prev, newCategory];
-      onCategoriesChange?.(newCategories);
-      return newCategories;
-    });
+    const newCategories = [...categories, newCategory];
+    updateCategories(newCategories);
     setIsAdding(true);
   };
 
   // Mettre à jour une catégorie
   const updateCategory = (id: string, field: keyof PriceCategory, value: string | number) => {
-    setCategories(prev => {
-      const newCategories = prev.map(cat =>
-        cat.id === id ? { ...cat, [field]: value } : cat
-      );
-      onCategoriesChange?.(newCategories);
-      return newCategories;
-    });
+    const newCategories = categories.map(cat =>
+      cat.id === id ? { ...cat, [field]: value } : cat
+    );
+    updateCategories(newCategories);
   };
 
   // Supprimer une catégorie
   const removeCategory = (id: string) => {
-    setCategories(prev => {
-      const newCategories = prev.filter(cat => cat.id !== id);
-      onCategoriesChange?.(newCategories);
-      return newCategories;
-    });
+    const newCategories = categories.filter(cat => cat.id !== id);
+    updateCategories(newCategories);
   };
 
   // Réorganiser les catégories
@@ -78,13 +115,10 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
       return;
     }
 
-    setCategories(prev => {
-      const newCategories = [...prev];
-      const newIndex = direction === 'up' ? index - 1 : index + 1;
-      [newCategories[index], newCategories[newIndex]] = [newCategories[newIndex], newCategories[index]];
-      onCategoriesChange?.(newCategories);
-      return newCategories;
-    });
+    const newCategories = [...categories];
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    [newCategories[index], newCategories[newIndex]] = [newCategories[newIndex], newCategories[index]];
+    updateCategories(newCategories);
   };
 
   return (
@@ -102,6 +136,7 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
         
         <button
           onClick={addCategory}
+          type="button"
           className="bg-event-primary hover:bg-event-primary/90 text-sm text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
         >
           Ajouter une catégorie
@@ -124,6 +159,13 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
           />
         ))}
       </div>
+
+      {/* Message si aucune catégorie */}
+      {categories.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          <p>Aucune catégorie de prix définie. Cliquez sur "Ajouter une catégorie" pour commencer.</p>
+        </div>
+      )}
 
       {/* Résumé */}
       {categories.length > 0 && (
@@ -205,12 +247,13 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           <div className="flex items-center gap-2">
             {/* Boutons de déplacement */}
             <button
+              type="button"
               onClick={() => onMove(index, 'up')}
               disabled={index === 0}
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30"
               title="Déplacer vers le haut"
             >
-              <ArrowUp />
+              <ArrowUp className="w-4 h-4" />
             </button>
             
             <button
@@ -219,7 +262,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30"
               title="Déplacer vers le bas"
             >
-              <ArrowDown />
+              <ArrowDown className="w-4 h-4" />
             </button>
             
             <button
@@ -227,21 +270,21 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
               className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600"
               title="Supprimer la catégorie"
             >
-              <Trash />
+              <Trash className="w-4 h-4" />
             </button>
             
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              {isExpanded ? <ChevronDown /> : <ChevronUp />}
+              {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             </button>
           </div>
         </div>
 
         {/* Contenu dépliable */}
         {isExpanded && (
-          <div className="space-y-4 animate-fadeIn">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Prix */}
               <div>

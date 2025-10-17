@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Plus, Trash2, ChevronUp, ChevronDown, Edit3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useSubEvents } from '@/hooks/use-sub-events';
 
 interface SubEventsGeneratorProps {
   onSubEventsChange?: (subEvents: string[]) => void;
@@ -14,45 +13,59 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
   onSubEventsChange,
   initialSubEvents = []
 }) => {
-  const {
-    subEvents,
-    addSubEvent,
-    updateSubEvent,
-    removeSubEvent,
-    moveSubEvent,
-  } = useSubEvents({ onSubEventsChange });
-
+  const [subEvents, setSubEvents] = useState<string[]>(initialSubEvents);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  // Initialiser avec les sous-événements initiaux
-  React.useEffect(() => {
-    if (initialSubEvents.length > 0) {
-      initialSubEvents.forEach(event => addSubEvent(event));
-    }
-  }, []);
+  // Notifier le parent des changements
+  const notifyParent = (newSubEvents: string[]) => {
+    onSubEventsChange?.(newSubEvents);
+  };
+
+  // Gestionnaire central pour les mises à jour
+  const updateSubEvents = (newSubEvents: string[]) => {
+    setSubEvents(newSubEvents);
+    notifyParent(newSubEvents);
+  };
 
   const handleAddSubEvent = () => {
-    const newIndex = subEvents.length;
-    addSubEvent('');
-    setEditingIndex(newIndex);
+    const newSubEvent = `Sous-événement ${subEvents.length + 1}`;
+    const newSubEvents = [...subEvents, newSubEvent];
+    updateSubEvents(newSubEvents);
+    setEditingIndex(newSubEvents.length - 1);
   };
 
   const handleUpdateSubEvent = (index: number, value: string) => {
-    updateSubEvent(index, value);
+    const newSubEvents = [...subEvents];
+    newSubEvents[index] = value;
+    updateSubEvents(newSubEvents);
   };
 
   const handleRemoveSubEvent = (index: number) => {
-    removeSubEvent(index);
+    const newSubEvents = subEvents.filter((_, i) => i !== index);
+    updateSubEvents(newSubEvents);
+    
     if (editingIndex === index) {
       setEditingIndex(null);
+    } else if (editingIndex && editingIndex > index) {
+      setEditingIndex(editingIndex - 1);
     }
   };
 
   const handleMoveSubEvent = (index: number, direction: 'up' | 'down') => {
+    if (
+      (direction === 'up' && index === 0) ||
+      (direction === 'down' && index === subEvents.length - 1)
+    ) {
+      return;
+    }
+
     const newIndex = direction === 'up' ? index - 1 : index + 1;
-    moveSubEvent(index, newIndex);
+    const newSubEvents = [...subEvents];
+    const [movedItem] = newSubEvents.splice(index, 1);
+    newSubEvents.splice(newIndex, 0, movedItem);
     
-    // Mettre à jour l'index d'édition si nécessaire
+    updateSubEvents(newSubEvents);
+    
     if (editingIndex === index) {
       setEditingIndex(newIndex);
     }
@@ -80,6 +93,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
         </div>
 
         <Button
+          type="button"
           onClick={handleAddSubEvent}
           className="bg-event-primary hover:bg-event-primary/90 text-white flex items-center gap-2"
         >
@@ -92,7 +106,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
       <div className="space-y-4">
         {subEvents.map((subEvent, index) => (
           <SubEventItem
-            key={index}
+            key={`${index}-${subEvent}`}
             index={index}
             subEvent={subEvent}
             isEditing={editingIndex === index}
@@ -163,14 +177,12 @@ const SubEventItem: React.FC<SubEventItemProps> = ({
   onStartEditing,
   onStopEditing,
 }) => {
-  const [localValue, setLocalValue] = React.useState(subEvent);
-
-  React.useEffect(() => {
-    setLocalValue(subEvent);
-  }, [subEvent]);
+  const [localValue, setLocalValue] = useState(subEvent);
 
   const handleSave = () => {
-    onUpdate(localValue.trim());
+    if (localValue.trim()) {
+      onUpdate(localValue.trim());
+    }
     onStopEditing();
   };
 
@@ -184,6 +196,14 @@ const SubEventItem: React.FC<SubEventItemProps> = ({
       e.preventDefault();
       handleSave();
     } else if (e.key === 'Escape') {
+      handleCancel();
+    }
+  };
+
+  const handleBlur = () => {
+    if (localValue.trim() !== subEvent) {
+      handleSave();
+    } else {
       handleCancel();
     }
   };
@@ -202,7 +222,7 @@ const SubEventItem: React.FC<SubEventItemProps> = ({
             <Input
               value={localValue}
               onChange={(e) => setLocalValue(e.target.value)}
-              onBlur={handleSave}
+              onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder="Nom du sous-événement (ex: Session d'ouverture, Atelier technique, etc.)"
               className="w-full"
@@ -258,6 +278,7 @@ const SubEventItem: React.FC<SubEventItemProps> = ({
           {/* Bouton Supprimer */}
           <button
             onClick={onRemove}
+            type="button"
             className="p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors"
             title="Supprimer"
           >

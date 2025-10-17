@@ -1,6 +1,6 @@
-import type { Event } from "@/app/model/event.model";
+import type { EventDto } from "@/app/model/event.model";
 
-export const recentEvents: Event[] = [
+export const recentEvents: EventDto[] = [
   {
     id: 1,
     title: "Conférence sur la technologie",
@@ -115,10 +115,10 @@ export const favoriteEvents = [
     sales: 8500,
     capacity: 12000
   }
-] as Event[];
+] as EventDto[];
 
 
-export const allEvents: Event[] = [
+export const allEvents: EventDto[] = [
   {
     id: 1,
     title: "Tech Conference 2024",

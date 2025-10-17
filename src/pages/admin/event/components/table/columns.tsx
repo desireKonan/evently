@@ -1,12 +1,12 @@
 "use client"
 
-import type { Event } from "@/app/model/event.model";
+import type { EventDto } from "@/app/model/event.model";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { ColumnDef } from "@tanstack/react-table"
 
 // This type is used to define the shape of our data.
-export const columns: ColumnDef<Event>[] = [
+export const columns: ColumnDef<EventDto>[] = [
     {
         accessorKey: "event-name",
         header: "Nom de l'événement",

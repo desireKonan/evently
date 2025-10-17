@@ -1,11 +1,11 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { HeartCrackIcon } from 'lucide-react'
-import type { Event } from '@/app/model/event.model'
+import type { EventDto } from '@/app/model/event.model'
 
 
 interface EventCardProps {
-  event: Event
+  event: EventDto
   onToggleFavorite: (eventId: string) => void
 }
 
