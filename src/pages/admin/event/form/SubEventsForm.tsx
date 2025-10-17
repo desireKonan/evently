@@ -1,41 +1,28 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react";
+import { useSubEventsStore } from "@/stores/subEventStore";
 import SubEventsGenerator from "../components/SubEventsGenerator";
-import { useSubEvents, type SubEvent } from "@/hooks/use-sub-events";
+import type { EventFormData } from "@/app/schema/event.schema";
+import { useEffect } from "react";
+import type { UseFormReturn } from "react-hook-form";
 
-const SubEventsForm: React.FC = () => {
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        date: '',
-        time: '',
-        location: '',
-        price: '',
-        image: null as File | null
-    });
-    const { setSubEvents } = useSubEvents();
+interface SubEventsFormProps {
+    form: UseFormReturn<EventFormData>;
+}
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+const SubEventsForm: React.FC<SubEventsFormProps> = ({ form }) => {
+    const { setValue, getValues } = form;
+    const { subEvents, setSubEvents } = useSubEventsStore();
+
+    const handleSubEventsChange = (events: string[]) => {
+        setValue('sub_events', events, { shouldValidate: true });
     };
 
-     const handleSubEventsChange = (events: SubEvent[]) => {
-        setSubEvents(events);
-        console.log('Sous-événements mis à jour:', events);
-    };
-
-    const handleCancel = () => {
-        // Logique d'annulation
-        console.log('Formulaire annulé');
-    };
-
-
+    // Initialiser avec les valeurs existantes du formulaire
+    useEffect(() => {
+        const existingSubEvents = getValues('sub_events');
+        if (existingSubEvents && Array.isArray(existingSubEvents)) {
+            setSubEvents(existingSubEvents);
+        }
+    }, []);
 
     return (
         <div className="space-y-6">
@@ -43,25 +30,8 @@ const SubEventsForm: React.FC = () => {
             <div className="mb-8">
                 <SubEventsGenerator
                     onSubEventsChange={handleSubEventsChange}
-                    eventDate={new Date().toDateString()}
+                    initialSubEvents={subEvents}
                 />
-            </div>
-
-            <div className="flex items-center justify-end gap-x-6 pt-4">
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCancel}
-                    className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
-                >
-                    Annuler
-                </Button>
-                <Button
-                    type="submit"
-                    className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
-                >
-                    Créer l'événement
-                </Button>
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useActionState } from 'react';
+import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from '@/components/layout/client/EventLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
@@ -6,16 +6,19 @@ import EventForm from './form/EventForm';
 import SubEventsForm from './form/SubEventsForm';
 import CodeQrVisualizer from './form/CodeQrVisualizer';
 import BadgeVisualizer from './form/BadgeVisualizer';
+import { useEventForm } from '@/hooks/use-form-event';
+import { Button } from '@/components/ui/button';
 
 const EventFormPage: React.FC = () => {
-  const [error, submitAction, isPending] = useActionState(
-    async (previousState: any, formData: any) => {
-      console.log("Submitted form !");
-      return null;
-    },
-    null,
-  );
-  
+  const { form, onSubmit, isLoading, error } = useEventForm();
+
+  const handleSubmit = async (formData: FormData) => {
+    await onSubmit(form.getValues());
+  };
+
+  const handleCancel = () => {
+    form.reset();
+  };
 
   return (
     <Layout>
@@ -30,7 +33,20 @@ const EventFormPage: React.FC = () => {
             </p>
           </div>
 
-          <form action={submitAction}>
+          {/* Affichage des erreurs globales */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          {form.formState.errors.root && (
+            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {form.formState.errors.root.message}
+            </div>
+          )}
+
+          <form action={handleSubmit}>
             <div className="sticky top-16 z-[9] bg-event-background/80 backdrop-blur-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4">
               <Tabs className="w-full space-y-5">
                 <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0 h-auto">
@@ -42,14 +58,14 @@ const EventFormPage: React.FC = () => {
                 <TabsContent value="event">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <EventForm />
+                      <EventForm form={form} />
                     </CardContent>
                   </Card>
                 </TabsContent>
                 <TabsContent value="sub-events">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <SubEventsForm />
+                      <SubEventsForm form={form} />
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -68,6 +84,24 @@ const EventFormPage: React.FC = () => {
                   </Card>
                 </TabsContent>
               </Tabs>
+              <div className="flex items-center justify-end gap-x-6 pt-4">
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCancel}
+                    disabled={isLoading}
+                    className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
+                >
+                    Annuler
+                </Button>
+                <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
+                >
+                    {isLoading ? 'Création...' : 'Créer l\'événement'}
+                </Button>
+            </div>
             </div>
           </form>
         </div>

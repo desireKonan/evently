@@ -1,115 +1,69 @@
 // components/SubEventsGenerator.tsx
 import React, { useState } from 'react';
-import { Plus, Trash2, Clock, Calendar, Edit3, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, ChevronUp, ChevronDown, Edit3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useSubEvents } from '@/hooks/use-sub-events';
 
-// Types
-interface SubEvent {
-  id: string;
-  name: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  date?: string;
+interface SubEventsGeneratorProps {
+  onSubEventsChange?: (subEvents: string[]) => void;
+  initialSubEvents?: string[];
 }
 
-interface SubEventsManagerProps {
-  onSubEventsChange?: (subEvents: SubEvent[]) => void;
-  initialSubEvents?: SubEvent[];
-  eventDate?: string; // Date principale de l'événement
-}
-
-const SubEventsGenerator: React.FC<SubEventsManagerProps> = ({
+const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
   onSubEventsChange,
-  initialSubEvents = [],
-  eventDate
+  initialSubEvents = []
 }) => {
-  const [subEvents, setSubEvents] = useState<SubEvent[]>(initialSubEvents);
-  const [isAdding, setIsAdding] = useState(false);
+  const {
+    subEvents,
+    addSubEvent,
+    updateSubEvent,
+    removeSubEvent,
+    moveSubEvent,
+  } = useSubEvents({ onSubEventsChange });
 
-  // Générer un ID unique
-  const generateId = () => `subevent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  // Ajouter un nouveau sous-événement
-  const addSubEvent = () => {
-    const newSubEvent: SubEvent = {
-      id: generateId(),
-      name: '',
-      description: '',
-      startTime: '09:00',
-      endTime: '10:00',
-      date: eventDate
-    };
-
-    setSubEvents(prev => {
-      const newSubEvents = [...prev, newSubEvent];
-      onSubEventsChange?.(newSubEvents);
-      return newSubEvents;
-    });
-    setIsAdding(true);
-  };
-
-  // Mettre à jour un sous-événement
-  const updateSubEvent = (id: string, field: keyof SubEvent, value: string) => {
-    setSubEvents(prev => {
-      const newSubEvents = prev.map(event =>
-        event.id === id ? { ...event, [field]: value } : event
-      );
-      onSubEventsChange?.(newSubEvents);
-      return newSubEvents;
-    });
-  };
-
-  // Supprimer un sous-événement
-  const removeSubEvent = (id: string) => {
-    setSubEvents(prev => {
-      const newSubEvents = prev.filter(event => event.id !== id);
-      onSubEventsChange?.(newSubEvents);
-      return newSubEvents;
-    });
-  };
-
-  // Déplacer un sous-événement
-  const moveSubEvent = (index: number, direction: 'up' | 'down') => {
-    if (
-      (direction === 'up' && index === 0) ||
-      (direction === 'down' && index === subEvents.length - 1)
-    ) {
-      return;
+  // Initialiser avec les sous-événements initiaux
+  React.useEffect(() => {
+    if (initialSubEvents.length > 0) {
+      initialSubEvents.forEach(event => addSubEvent(event));
     }
+  }, []);
 
-    setSubEvents(prev => {
-      const newSubEvents = [...prev];
-      const newIndex = direction === 'up' ? index - 1 : index + 1;
-      [newSubEvents[index], newSubEvents[newIndex]] = [newSubEvents[newIndex], newSubEvents[index]];
-      onSubEventsChange?.(newSubEvents);
-      return newSubEvents;
-    });
+  const handleAddSubEvent = () => {
+    const newIndex = subEvents.length;
+    addSubEvent('');
+    setEditingIndex(newIndex);
   };
 
-  // Valider les heures
-  const validateTime = (startTime: string, endTime: string): boolean => {
-    if (!startTime || !endTime) return true;
-    return startTime < endTime;
+  const handleUpdateSubEvent = (index: number, value: string) => {
+    updateSubEvent(index, value);
   };
 
-  // Calculer la durée
-  const calculateDuration = (startTime: string, endTime: string): string => {
-    if (!startTime || !endTime) return '0h';
+  const handleRemoveSubEvent = (index: number) => {
+    removeSubEvent(index);
+    if (editingIndex === index) {
+      setEditingIndex(null);
+    }
+  };
 
-    const [startHours, startMinutes] = startTime.split(':').map(Number);
-    const [endHours, endMinutes] = endTime.split(':').map(Number);
+  const handleMoveSubEvent = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    moveSubEvent(index, newIndex);
+    
+    // Mettre à jour l'index d'édition si nécessaire
+    if (editingIndex === index) {
+      setEditingIndex(newIndex);
+    }
+  };
 
-    const startTotalMinutes = startHours * 60 + startMinutes;
-    const endTotalMinutes = endHours * 60 + endMinutes;
-    const durationMinutes = endTotalMinutes - startTotalMinutes;
+  const handleStartEditing = (index: number) => {
+    setEditingIndex(index);
+  };
 
-    const hours = Math.floor(durationMinutes / 60);
-    const minutes = durationMinutes % 60;
-
-    if (hours === 0) return `${minutes}min`;
-    if (minutes === 0) return `${hours}h`;
-    return `${hours}h${minutes}min`;
+  const handleStopEditing = () => {
+    setEditingIndex(null);
   };
 
   return (
@@ -117,55 +71,54 @@ const SubEventsGenerator: React.FC<SubEventsManagerProps> = ({
       {/* En-tête */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-lg text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Sous-événements
           </h2>
-          <p className="text-gray-600 text-sm dark:text-gray-400 mt-1">
-            Organisez le programme détaillé de votre événement
+          <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
+            Ajoutez les différentes activités de votre événement
           </p>
         </div>
 
-        <button
-          onClick={addSubEvent}
-          className="bg-event-primary hover:bg-event-primary/90 text-white text-sm px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+        <Button
+          onClick={handleAddSubEvent}
+          className="bg-event-primary hover:bg-event-primary/90 text-white flex items-center gap-2"
         >
           <Plus size={20} />
           Ajouter un sous-événement
-        </button>
+        </Button>
       </div>
 
       {/* Liste des sous-événements */}
       <div className="space-y-4">
         {subEvents.map((subEvent, index) => (
-          <SubEventCard
-            key={subEvent.id}
-            subEvent={subEvent}
+          <SubEventItem
+            key={index}
             index={index}
-            totalSubEvents={subEvents.length}
-            onUpdate={(field, value) => updateSubEvent(subEvent.id, field, value)}
-            onRemove={() => removeSubEvent(subEvent.id)}
-            onMove={moveSubEvent}
-            isEditing={isAdding && index === subEvents.length - 1}
-            onBlur={() => setIsAdding(false)}
-            calculateDuration={calculateDuration}
-            validateTime={validateTime}
+            subEvent={subEvent}
+            isEditing={editingIndex === index}
+            totalItems={subEvents.length}
+            onUpdate={(value) => handleUpdateSubEvent(index, value)}
+            onRemove={() => handleRemoveSubEvent(index)}
+            onMove={handleMoveSubEvent}
+            onStartEditing={() => handleStartEditing(index)}
+            onStopEditing={handleStopEditing}
           />
         ))}
 
         {subEvents.length === 0 && (
           <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
             <div className="text-gray-400 dark:text-gray-500 mb-3">
-              <Calendar size={48} className="mx-auto" />
+              <Plus size={48} className="mx-auto" />
             </div>
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Aucun sous-événement programmé
+              Aucun sous-événement ajouté
             </p>
-            <button
-              onClick={addSubEvent}
-              className="bg-event-primary hover:bg-event-primary/90 text-white text-sm px-4 py-2 rounded-lg font-medium"
+            <Button
+              onClick={handleAddSubEvent}
+              className="bg-event-primary hover:bg-event-primary/90 text-white"
             >
-              Planifier le premier sous-événement
-            </button>
+              Ajouter le premier sous-événement
+            </Button>
           </div>
         )}
       </div>
@@ -173,32 +126,11 @@ const SubEventsGenerator: React.FC<SubEventsManagerProps> = ({
       {/* Résumé */}
       {subEvents.length > 0 && (
         <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h3 className="font-semibold text-lg mb-4">Résumé du programme</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{subEvents.length}</div>
-              <div className="text-gray-600 dark:text-gray-400">Sous-événements</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {subEvents[0]?.startTime || '--:--'}
-              </div>
-              <div className="text-gray-600 dark:text-gray-400">Début</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {subEvents[subEvents.length - 1]?.endTime || '--:--'}
-              </div>
-              <div className="text-gray-600 dark:text-gray-400">Fin</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {calculateDuration(
-                  subEvents[0]?.startTime || '00:00',
-                  subEvents[subEvents.length - 1]?.endTime || '00:00'
-                )}
-              </div>
-              <div className="text-gray-600 dark:text-gray-400">Durée totale</div>
+          <h3 className="font-semibold text-lg mb-4">Résumé des sous-événements</h3>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-event-primary">{subEvents.length}</div>
+            <div className="text-gray-600 dark:text-gray-400">
+              sous-événement{subEvents.length > 1 ? 's' : ''} programmé{subEvents.length > 1 ? 's' : ''}
             </div>
           </div>
         </div>
@@ -207,165 +139,152 @@ const SubEventsGenerator: React.FC<SubEventsManagerProps> = ({
   );
 };
 
-// Composant Carte de sous-événement
-interface SubEventCardProps {
-  subEvent: SubEvent;
+// Composant pour un seul sous-événement
+interface SubEventItemProps {
   index: number;
-  totalSubEvents: number;
-  onUpdate: (field: keyof SubEvent, value: string) => void;
+  subEvent: string;
+  isEditing: boolean;
+  totalItems: number;
+  onUpdate: (value: string) => void;
   onRemove: () => void;
   onMove: (index: number, direction: 'up' | 'down') => void;
-  isEditing: boolean;
-  onBlur: () => void;
-  calculateDuration: (start: string, end: string) => string;
-  validateTime: (start: string, end: string) => boolean;
+  onStartEditing: () => void;
+  onStopEditing: () => void;
 }
 
-const SubEventCard: React.FC<SubEventCardProps> = ({
-  subEvent,
+const SubEventItem: React.FC<SubEventItemProps> = ({
   index,
-  totalSubEvents,
+  subEvent,
+  isEditing,
+  totalItems,
   onUpdate,
   onRemove,
   onMove,
-  isEditing,
-  onBlur,
-  calculateDuration,
-  validateTime
+  onStartEditing,
+  onStopEditing,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(isEditing);
-  const isTimeValid = validateTime(subEvent.startTime, subEvent.endTime);
+  const [localValue, setLocalValue] = React.useState(subEvent);
+
+  React.useEffect(() => {
+    setLocalValue(subEvent);
+  }, [subEvent]);
+
+  const handleSave = () => {
+    onUpdate(localValue.trim());
+    onStopEditing();
+  };
+
+  const handleCancel = () => {
+    setLocalValue(subEvent);
+    onStopEditing();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === 'Escape') {
+      handleCancel();
+    }
+  };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-      <div className="p-6">
-        {/* En-tête de la carte */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3 flex-1">
-            {/* Numéro d'ordre */}
-            <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
-              {index + 1}
-            </div>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-4">
+        {/* Numéro d'ordre */}
+        <div className="flex-shrink-0 w-8 h-8 bg-event-primary text-white rounded-full flex items-center justify-center font-semibold">
+          {index + 1}
+        </div>
 
-            {/* Nom du sous-événement */}
-            <input
-              type="text"
-              value={subEvent.name}
-              onChange={(e) => onUpdate('name', e.target.value)}
-              placeholder="Nom du sous-événement"
-              className="text-lg font-semibold bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-primary/50 rounded px-2 py-1 flex-1"
-              onFocus={() => setIsExpanded(true)}
-              onBlur={onBlur}
-              autoFocus={isEditing}
+        {/* Champ de texte */}
+        <div className="flex-1">
+          {isEditing ? (
+            <Input
+              value={localValue}
+              onChange={(e) => setLocalValue(e.target.value)}
+              onBlur={handleSave}
+              onKeyDown={handleKeyDown}
+              placeholder="Nom du sous-événement (ex: Session d'ouverture, Atelier technique, etc.)"
+              className="w-full"
+              autoFocus
             />
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Indicateur de durée */}
-            <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
-              <Clock size={16} />
-              {calculateDuration(subEvent.startTime, subEvent.endTime)}
+          ) : (
+            <div
+              onClick={onStartEditing}
+              className="cursor-text p-2 rounded border border-transparent hover:border-gray-300 min-h-[42px] flex items-center"
+            >
+              {subEvent || (
+                <span className="text-gray-400 italic">
+                  Cliquez pour ajouter un nom de sous-événement...
+                </span>
+              )}
             </div>
+          )}
+        </div>
 
-            {/* Boutons d'action */}
-            <button
-              onClick={() => onMove(index, 'up')}
-              disabled={index === 0}
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 transition-colors"
-              title="Déplacer vers le haut"
-            >
-              <ChevronUp size={16} />
-            </button>
+        {/* Actions */}
+        <div className="flex items-center gap-1">
+          {/* Bouton Monter */}
+          <button
+            onClick={() => onMove(index, 'up')}
+            disabled={index === 0}
+            className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 transition-colors"
+            title="Déplacer vers le haut"
+          >
+            <ChevronUp size={16} />
+          </button>
 
-            <button
-              onClick={() => onMove(index, 'down')}
-              disabled={index === totalSubEvents - 1}
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 transition-colors"
-              title="Déplacer vers le bas"
-            >
-              <ChevronDown size={16} />
-            </button>
+          {/* Bouton Descendre */}
+          <button
+            onClick={() => onMove(index, 'down')}
+            disabled={index === totalItems - 1}
+            className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 transition-colors"
+            title="Déplacer vers le bas"
+          >
+            <ChevronDown size={16} />
+          </button>
 
+          {/* Bouton Éditer */}
+          {!isEditing && (
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={onStartEditing}
               className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              title="Modifier"
             >
               <Edit3 size={16} />
             </button>
+          )}
 
-            <button
-              onClick={onRemove}
-              className="p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors"
-              title="Supprimer le sous-événement"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
+          {/* Bouton Supprimer */}
+          <button
+            onClick={onRemove}
+            className="p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors"
+            title="Supprimer"
+          >
+            <Trash2 size={16} />
+          </button>
         </div>
-
-        {/* Horaires */}
-        <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
-              Heure de debut
-            </label>
-            <div className="mt-2">
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={new Date().toDateString()}
-                onChange={() => { }}
-                className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="time">
-              Heure de fin
-            </label>
-            <div className="mt-2">
-              <Input
-                id="time"
-                name="time"
-                type="time"
-                value={new Date().toDateString()}
-                onChange={() => { }}
-                className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Contenu dépliable */}
-        {isExpanded && (
-          <div className="animate-fadeIn">
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Description
-              </label>
-              <textarea
-                value={subEvent.description}
-                onChange={(e) => onUpdate('description', e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white dark:bg-gray-700 resize-none"
-                placeholder="Description détaillée de ce sous-événement..."
-              />
-            </div>
-
-            {/* Aperçu de la plage horaire */}
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-              <div className="text-sm text-blue-800 dark:text-blue-300">
-                <strong>Plage horaire:</strong> {subEvent.startTime} - {subEvent.endTime}
-                <span className="ml-2">({calculateDuration(subEvent.startTime, subEvent.endTime)})</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Actions d'édition */}
+      {isEditing && (
+        <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCancel}
+          >
+            Annuler
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleSave}
+            disabled={!localValue.trim()}
+          >
+            Sauvegarder
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

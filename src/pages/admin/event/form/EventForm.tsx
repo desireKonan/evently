@@ -1,57 +1,30 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import CategoricalPricing from "../components/CategorialPricing";
-import type { PriceCategory } from "@/hooks/use-pricing-categories";
+import { type UseFormReturn } from "react-hook-form";
+import { eventTypeOptions, type EventFormData } from "@/app/schema/event.schema";
 
-const EventForm: React.FC = () => {
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        date: '',
-        time: '',
-        location: '',
-        price: '',
-        image: null as File | null
-    });
-
-    const [pricingCategories, setPricingCategories] = useState<PriceCategory[]>([]);
-
-    const handleCategoriesChange = (categories: PriceCategory[]) => {
-        setPricingCategories(categories);
-        console.log('Catégories mises à jour:', categories);
-    };
+interface EventFormProps {
+    form: UseFormReturn<EventFormData>;
+}
 
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+const EventForm: React.FC<EventFormProps> = ({ form }) => {
+    const { register, formState: { errors }, setValue, watch } = form;
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
-        setFormData(prev => ({
-            ...prev,
-            image: file
-        }));
+        const files = [];
+        files.push(file ?? new File([], ''));
+        setValue('images', files, { shouldValidate: true });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Logique de soumission du formulaire
-        console.log('Données du formulaire:', formData);
-        // Ici vous ajouteriez la logique pour envoyer les données à votre API
+    const handleCategoriesChange = (categories: any[]) => {
+        setValue('ticket_prices', categories, { shouldValidate: true });
     };
 
-    const handleCancel = () => {
-        // Logique d'annulation
-        console.log('Formulaire annulé');
-    };
-
+    const imageFile = watch('images');
+    const type = watch('type');
 
 
     return (
@@ -62,14 +35,19 @@ const EventForm: React.FC = () => {
                 </label>
                 <div className="mt-2">
                     <Input
-                        id="title"
-                        name="title"
+                        {...register('name')}
+                        id="name"
                         placeholder="ex: Conférence Tech 2024"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
+                        className={
+                            `block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                                errors.name ? 'ring-red-500' : 'ring-gray-300'
+                            } `
+                        }
                         required
                     />
+                    {errors.name && (
+                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                    )}
                 </div>
             </div>
 
@@ -79,85 +57,142 @@ const EventForm: React.FC = () => {
                 </label>
                 <div className="mt-2">
                     <Textarea
+                        {...register('description')}
                         id="description"
-                        name="description"
                         placeholder="Décrivez votre événement en détail"
-                        value={formData.description}
-                        onChange={handleInputChange}
                         rows={4}
-                        className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
+                        className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                            errors.description ? 'ring-red-500' : 'ring-gray-300'
+                        }`}
                         required
                     />
+                    {errors.description && (
+                        <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                    )}
                 </div>
             </div>
 
             <div>
                 <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
-                    Date
+                    Nombre de place
                 </label>
                 <div className="mt-2">
                     <Input
-                        id="date"
-                        name="date"
-                        type="date"
-                        value={formData.date}
-                        onChange={handleInputChange}
-                        className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
+                        id="limit"
+                        {...register('limit')}
+                        type="number"
+                        className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                            errors.limit ? 'ring-red-500' : 'ring-gray-300'
+                        }`}
                         required
                     />
+                    {errors.limit && (
+                        <p className="mt-1 text-sm text-red-600">{errors.limit.message}</p>
+                    )}
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
+                    Addresse
+                </label>
+                <div className="mt-2">
+                    <Input
+                        id="limit"
+                        {...register('address')}
+                        className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                            errors.address ? 'ring-red-500' : 'ring-gray-300'
+                        }`}
+                        required
+                    />
+                    {errors.address && (
+                        <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>
+                    )}
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="date">
+                    Lieu
+                </label>
+                <div className="mt-2">
+                    <Input
+                        id="limit"
+                        {...register('place')}
+                        className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                            errors.place ? 'ring-red-500' : 'ring-gray-300'
+                        }`}
+                        required
+                    />
+                    {errors.place && (
+                        <p className="mt-1 text-sm text-red-600">{errors.place.message}</p>
+                    )}
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="eventType">
+                    Type d'événement
+                </label>
+                <div className="mt-2">
+                    <select
+                        {...register('type')}
+                        id="eventType"
+                        defaultValue={type}
+                        className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 
+                            ${errors.type ? 'ring-red-500' : 'ring-gray-300'}
+                    `}>
+                        {eventTypeOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.type && (
+                        <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>
+                    )}
                 </div>
             </div>
 
             <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
                 <div>
                     <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="time">
-                        Heure de debut
+                        Date de début
                     </label>
                     <div className="mt-2">
                         <Input
-                            id="time"
-                            name="time"
-                            type="time"
-                            value={formData.time}
-                            onChange={handleInputChange}
-                            className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
+                            id="start-date"
+                            {...register('start_date')}
+                            type="date"
+                            className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                                errors.start_date ? 'ring-red-500' : 'ring-gray-300'
+                            }`}
                             required
                         />
                     </div>
+                    {errors.start_date && (
+                        <p className="mt-1 text-sm text-red-600">{errors.start_date.message}</p>
+                    )}
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="time">
-                        Heure de fin
+                        Date de fin
                     </label>
                     <div className="mt-2">
                         <Input
-                            id="time"
-                            name="time"
-                            type="time"
-                            value={formData.time}
-                            onChange={handleInputChange}
-                            className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
+                            id="end-date"
+                            {...register('end_date')}
+                            type="date"
+                            className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
+                                errors.end_date ? 'ring-red-500' : 'ring-gray-300'
+                            }`}
                             required
                         />
+                        {errors.end_date && (
+                            <p className="mt-1 text-sm text-red-600">{errors.end_date.message}</p>
+                        )}
                     </div>
-                </div>
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium leading-6 text-event-foreground" htmlFor="location">
-                    Lieu
-                </label>
-                <div className="mt-2">
-                    <Input
-                        id="location"
-                        name="location"
-                        placeholder="ex: Centre des congrès, Ville"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        className="block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6"
-                        required
-                    />
                 </div>
             </div>
 
@@ -166,6 +201,9 @@ const EventForm: React.FC = () => {
                     onCategoriesChange={handleCategoriesChange}
                     initialCategories={[]}
                 />
+                {errors.ticket_prices && (
+                    <p className="mt-1 text-sm text-red-600">{errors.ticket_prices.message}</p>
+                )}pricingCategories
             </div>
 
             <div>
@@ -205,30 +243,13 @@ const EventForm: React.FC = () => {
                             <p className="pl-1">ou glissez-déposez</p>
                         </div>
                         <p className="text-xs leading-5 text-gray-500">PNG, JPG, GIF jusqu'à 10MB</p>
-                        {formData.image && (
-                            <p className="mt-2 text-sm text-event-primary">
-                                Fichier sélectionné: {formData.image.name}
-                            </p>
-                        )}
+                            {imageFile && imageFile.length !== 0 && (
+                                <p className="mt-2 text-sm text-event-primary">
+                                    Fichier sélectionné: {imageFile[0].name}
+                                </p>
+                            )}
                     </div>
                 </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-x-6 pt-4">
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCancel}
-                    className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
-                >
-                    Annuler
-                </Button>
-                <Button
-                    type="submit"
-                    className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
-                >
-                    Créer l'événement
-                </Button>
             </div>
         </div>
     );
