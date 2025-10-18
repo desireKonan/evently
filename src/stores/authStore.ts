@@ -58,6 +58,7 @@ export const useAuthStore = create<AuthState>()(
 
             // Stockage dans le localStorage si nécessaire
             localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("token", access_token);
 
             set({
               isAuthenticated: !!access_token && !!user,
@@ -89,6 +90,7 @@ export const useAuthStore = create<AuthState>()(
 
           if (response.ok) {
             localStorage.removeItem("user");
+            localStorage.removeItem("token");
 
             set({
               isAuthenticated: false,

@@ -20,16 +20,28 @@ import { DataTablePagination } from "./DataTablePagination"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  pagination: {
+    currentPage: number
+    totalItems: number
+    totalPages: number
+    hasNext: boolean
+    hasPrevious: boolean
+  },
+  onPageChange: (page: number) => void
+  onLimitChange?: (limit: number) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pagination,
+  onPageChange
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
   })
 
   return (
@@ -80,7 +92,10 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination className="m-3" table={table} />
+      <DataTablePagination className="m-3" 
+        pagination={pagination} 
+        onPageChange={onPageChange}
+      />
     </div>
   )
 }

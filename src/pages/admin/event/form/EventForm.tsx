@@ -4,6 +4,7 @@ import CategoricalPricing from "../components/CategorialPricing";
 import { type UseFormReturn } from "react-hook-form";
 import { eventTypeOptions, type EventFormData } from "@/app/schema/event.schema";
 import { useEventStore } from "@/stores/eventStore";
+import { DateTimePicker } from "@/components/shared/DatetimePicker";
 
 interface EventFormProps {
     form: UseFormReturn<EventFormData>;
@@ -11,7 +12,7 @@ interface EventFormProps {
 
 
 const EventForm: React.FC<EventFormProps> = ({ form }) => {
-    const { register, formState: { errors }, setValue, watch } = form;
+    const { register, formState: { errors }, setValue, watch, getValues } = form;
     const { currentEvent } = useEventStore();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +38,14 @@ const EventForm: React.FC<EventFormProps> = ({ form }) => {
         // Fallback au formulaire
         const formCategories = watch('ticket_prices');
         return formCategories || [];
+    };
+
+    const handleStartDateChange = (date: Date | undefined) => {
+        setValue('start_date', date ?? new Date(), { shouldValidate: true });
+    };
+
+    const handleEndDateChange = (date: Date | undefined) => {
+        setValue('end_date', date ?? new Date(), { shouldValidate: true });
     };
 
 
@@ -173,14 +182,9 @@ const EventForm: React.FC<EventFormProps> = ({ form }) => {
                         Date de début
                     </label>
                     <div className="mt-2">
-                        <Input
-                            id="start-date"
-                            {...register('start_date')}
-                            type="date"
-                            className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
-                                errors.start_date ? 'ring-red-500' : 'ring-gray-300'
-                            }`}
-                            required
+                        <DateTimePicker 
+                            date={getValues('start_date')} 
+                            setDate={handleStartDateChange} 
                         />
                     </div>
                     {errors.start_date && (
@@ -193,14 +197,9 @@ const EventForm: React.FC<EventFormProps> = ({ form }) => {
                         Date de fin
                     </label>
                     <div className="mt-2">
-                        <Input
-                            id="end-date"
-                            {...register('end_date')}
-                            type="date"
-                            className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${
-                                errors.end_date ? 'ring-red-500' : 'ring-gray-300'
-                            }`}
-                            required
+                        <DateTimePicker 
+                            date={getValues('end_date')} 
+                            setDate={handleEndDateChange} 
                         />
                         {errors.end_date && (
                             <p className="mt-1 text-sm text-red-600">{errors.end_date.message}</p>

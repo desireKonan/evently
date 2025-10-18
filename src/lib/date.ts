@@ -3,3 +3,62 @@ const TODAY = new Date();
 export const getDate = () => {
     return TODAY.getDate();
 }
+
+
+// utils/date.utils.ts
+export const formatDateWithTime = (dateString: string | Date): string => {
+    if (!dateString) return "-";
+    
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+};
+
+export const formatDateRangeWithTime = (startDate: string | Date, endDate: string | Date): string => {
+    if (!startDate) return "-";
+    
+    const start = formatDateWithTime(startDate);
+    
+    if (!endDate) return start;
+    
+    const end = formatDateWithTime(endDate);
+    
+    // Si c'est le même jour, on n'affiche la date qu'une fois
+    const startDay = new Date(startDate).toDateString();
+    const endDay = new Date(endDate).toDateString();
+    
+    if (startDay === endDay) {
+        const startTime = new Date(startDate).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const endTime = new Date(endDate).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const date = new Date(startDate).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        
+        return `${date} ${startTime} - ${endTime}`;
+    }
+    
+    return `${start} - ${end}`;
+};
+
+export const formatDateTimeShort = (dateString: string | Date): string => {
+    if (!dateString) return "-";
+    
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+};

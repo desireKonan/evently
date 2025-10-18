@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
 import StatCard from '@/components/StatCard';
 import RecentEventsTable from '@/components/RecentEventsTable';
 import { recentEvents } from '@/mock/event.mock';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 // Définition des types TypeScript
 export interface Event {
@@ -27,8 +29,9 @@ export interface StatCardData {
 const Dashboard: React.FC = () => {
   // Données pour les cartes de statistiques
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("all");
-  const [showCreateButton, setShowCreateButton] = useState(true);
+  const [showCreateButton] = useState(true);
+  const location = useLocation();
+  const message = location.state?.message || null;
 
 
   const statCards: Partial<StatCardData>[] = [
@@ -62,10 +65,19 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  const handleCreateEvent = () => {
-    // Logique pour créer un événement
-    console.log("Créer un événement cliqué");
-  };
+  useEffect(() => {
+    // Exemple :mettre à jour le titre de la page
+    
+    if(message) {
+      toast.info(message, {
+        position: 'top-center'
+      });
+    }
+    
+    // L'effet ne se re-déclenchera que lorsque "count" changera.
+    // Si le tableau de dépendances était omis, l'effet s'exécuterait après chaque rendu.
+  }, []); 
+
 
   return (
     <Layout pageTitle="Tableau de bord" buttons={
@@ -79,6 +91,7 @@ const Dashboard: React.FC = () => {
         </button>
       )
     }>
+      <Toaster />
       <div className="p-10">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

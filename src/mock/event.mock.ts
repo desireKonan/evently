@@ -1,6 +1,7 @@
 import type { EventDto } from "@/app/model/event.model";
+import type { Event } from "@/pages/admin/event/EventListPage";
 
-export const recentEvents: EventDto[] = [
+export const recentEvents: Event[] = [
   {
     id: 1,
     title: "Conférence sur la technologie",

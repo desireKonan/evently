@@ -8,12 +8,30 @@ import CodeQrVisualizer from './form/CodeQrVisualizer';
 import BadgeVisualizer from './form/BadgeVisualizer';
 import { useEventForm } from '@/hooks/use-form-event';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const EventFormPage: React.FC = () => {
   const { form, onSubmit, isLoading, error } = useEventForm();
+  const navigate = useNavigate();
 
   const handleSubmit = async (formData: FormData) => {
-    await onSubmit(form.getValues());
+    try {
+      await onSubmit(form.getValues());
+      form.reset();
+      navigate('/dashboard', {
+        state: {
+          message: 'Evénement crée avec succès !' 
+        }
+      });
+    } catch(err) {
+      form.reset();
+      navigate('/dashboard', {
+        state: {
+          message: error || 'Erreur lors de la création de l\'évenement!' 
+        }
+      });
+    }
+    
   };
 
   const handleCancel = () => {

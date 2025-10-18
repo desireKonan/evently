@@ -68,7 +68,7 @@ export const useEventStore = create<EventState>()(
             const eventWithSubEvents = {
               ...eventData,
               sub_events: get().subEvents,
-              ticket_prices: get().ticketPrices,
+              ticket_prices: get().ticketPrices
             };
             eventWithSubEvents["organizer_id"] = token["organizer_id"];
 
@@ -90,7 +90,7 @@ export const useEventStore = create<EventState>()(
               {
                 method: "POST",
                 headers: {
-                  Authorization: `Bearer ${token?.access_token || ""}`,
+                  Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
                 },
                 body: formData,
               }
@@ -107,9 +107,14 @@ export const useEventStore = create<EventState>()(
 
             set({
               isLoading: false,
-              currentEvent: result.event,
               error: null,
             });
+
+            get().clearTicketPrices();
+            get().clearSubEvents();
+          
+
+            
 
             return result;
           } catch (error) {
@@ -136,6 +141,7 @@ export const useEventStore = create<EventState>()(
             const eventWithSubEvents = {
               ...eventData,
               sub_events: get().subEvents,
+              ticket_prices: get().ticketPrices
             };
 
             eventWithSubEvents["organizer_id"] = token["organizer_id"];
@@ -154,7 +160,7 @@ export const useEventStore = create<EventState>()(
             const response = await fetch(`/api/events/${eventId}`, {
               method: "POST",
               headers: {
-                Authorization: `Bearer ${token?.access_token || ""}`,
+                Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
               },
               body: formData,
             });
@@ -171,9 +177,12 @@ export const useEventStore = create<EventState>()(
 
             set({
               isLoading: false,
-              currentEvent: result.event,
               error: null,
             });
+
+            // ON vide les sous-éléments.
+            get().clearTicketPrices();
+            get().clearSubEvents();
 
             return result;
           } catch (error) {

@@ -13,12 +13,34 @@ export interface EventDto {
   ticket_prices: TicketPrice[]
   promotional_formule?: PromotionalFormule
   sub_events: string[]
+  organizer: OrganizerDto
   start_date: Date
   end_date: Date
   created_at: Date
   updated_at: Date | null
   closed_at: Date | null
   published_at: Date | null
+}
+
+
+export type EventElementDTO = {
+  id: string
+  name: string
+  description?: string
+  category: EventType
+  status: EventStatus
+  organizer: OrganizerDto
+  start_date: Date
+  end_date: Date
+  created_at: Date
+  published_at: Date | null
+}
+
+export type OrganizerDto = {
+  id: string,
+  name: string,
+  email: string,
+  contact: string
 }
 
 
@@ -46,3 +68,35 @@ export const EventStatus = {
 export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus];
 
 export type EventType = 'CONFERENCE' | 'SEMINAR' | 'LIVING_ROOM' | 'WORKSHOP' | 'WEBINAR' | 'B2B' | 'FORUM' | 'GALA_DINNER' | 'PRIVATE_EVENING' | 'OTHER';
+
+
+export const getStatusConfig = (status: EventStatus) => {
+  const statusConfigs = {
+    [EventStatus.PUBLISHED]: {
+      label: 'Publié',
+      variant: 'default' as const,
+      className: 'bg-green-100 text-green-800 border-green-200'
+    },
+    [EventStatus.DRAFT]: {
+      label: 'Brouillon',
+      variant: 'secondary' as const,
+      className: 'bg-gray-100 text-gray-800 border-gray-200'
+    },
+    [EventStatus.PENDING]: {
+      label: 'En attente',
+      variant: 'outline' as const,
+      className: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+    },
+    [EventStatus.REJECTED]: {
+      label: 'Rejeté',
+      variant: 'destructive' as const,
+      className: 'bg-red-100 text-red-800 border-red-200'
+    }
+  };
+
+  return statusConfigs[status] || {
+    label: 'Inconnu',
+    variant: 'secondary' as const,
+    className: 'bg-gray-100 text-gray-800 border-gray-200'
+  };
+};
