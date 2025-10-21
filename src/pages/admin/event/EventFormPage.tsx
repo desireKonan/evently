@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from '@/components/layout/client/EventLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
@@ -8,11 +8,20 @@ import CodeQrVisualizer from './form/CodeQrVisualizer';
 import BadgeVisualizer from './form/BadgeVisualizer';
 import { useEventForm } from '@/hooks/use-form-event';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEvent } from '@/app/service/event.service';
+import type { EventFormData } from '@/app/schema/event.schema';
+
+type EventFormPageMode = 'create' | 'edit' | 'view';
 
 const EventFormPage: React.FC = () => {
-  const { form, onSubmit, isLoading, error } = useEventForm();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const mode: EventFormPageMode = id ? (window.location.pathname.includes('/edit') ? 'edit' : 'view') : 'create';
+  const fetchEvent = useEvent(id);
+  const { form, onSubmit, isLoading, error } = useEventForm({
+    defaultValues: mode !== 'create' ? fetchEvent.data?.data as EventFormData : undefined
+  });
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -20,23 +29,57 @@ const EventFormPage: React.FC = () => {
       form.reset();
       navigate('/dashboard', {
         state: {
-          message: 'Evénement crée avec succès !' 
+          message: 'Evénement crée avec succès !'
         }
       });
-    } catch(err) {
+    } catch (err) {
       form.reset();
       navigate('/dashboard', {
         state: {
-          message: error || 'Erreur lors de la création de l\'évenement!' 
+          message: error || 'Erreur lors de la création de l\'évenement!'
         }
       });
     }
-    
   };
+
+  const getPageTitle = () => {
+    switch (mode) {
+      case 'edit':
+        return 'Modifier l\'événement';
+      case 'view':
+        return 'Détails de l\'événement';
+      default:
+        return 'Créer un événement';
+    }
+  };
+
+  const getPageDescription = () => {
+    switch (mode) {
+      case 'edit':
+        return 'Modifiez les informations de votre événement ci-dessous.';
+      case 'view':
+        return 'Consultez les détails de votre événement.';
+      default:
+        return 'Remplissez les informations ci-dessous pour mettre votre événement en ligne.';
+    }
+  };
+
+  const isReadOnly = mode === 'view';
 
   const handleCancel = () => {
     form.reset();
   };
+
+  // Charger l'événement si on est en mode édition/visualisation
+  useEffect(() => {
+    if (fetchEvent && mode !== 'create') {
+      // Réinitialiser le formulaire avec les données de l'événement
+      Object.entries(fetchEvent.data?.data as unknown as EventFormData).forEach(([key, value]) => {
+        form.setValue(key as any, value);
+      });
+    }
+  }, []);
+
 
   return (
     <Layout>
@@ -104,22 +147,22 @@ const EventFormPage: React.FC = () => {
               </Tabs>
               <div className="flex items-center justify-end gap-x-6 pt-4">
                 <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCancel}
-                    disabled={isLoading}
-                    className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  disabled={isLoading}
+                  className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
                 >
-                    Annuler
+                  Annuler
                 </Button>
                 <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
+                  type="submit"
+                  disabled={isLoading}
+                  className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
                 >
-                    {isLoading ? 'Création...' : 'Créer l\'événement'}
+                  {isLoading ? 'Création...' : 'Créer l\'événement'}
                 </Button>
-            </div>
+              </div>
             </div>
           </form>
         </div>

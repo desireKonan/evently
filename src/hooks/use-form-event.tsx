@@ -16,18 +16,18 @@ export const useEventForm = ({ defaultValues }: UseEventFormProps = {}) => {
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      place: '',
-      address: '',
-      organizer_id: '',
-      type: 'B2B',
-      limit: 10,
-      images: [],
-      ticket_prices: [],
-      sub_events: [],
-      start_date: new Date(),
-      end_date: new Date()
+      name: defaultValues?.name ? defaultValues.name : '',
+      description: defaultValues?.description ? defaultValues.description :  '',
+      place: defaultValues?.place ? defaultValues.place :  '',
+      address: defaultValues?.name ? defaultValues.name :  '',
+      organizer_id: defaultValues?.organizer_id ? defaultValues.organizer_id : '',
+      type: defaultValues?.type ? defaultValues.type : 'B2B',
+      limit: defaultValues?.limit ? defaultValues.limit : 10,
+      images: defaultValues?.images ? defaultValues.images : [],
+      ticket_prices: defaultValues?.ticket_prices ? defaultValues.ticket_prices : [],
+      sub_events: defaultValues?.sub_events ? defaultValues.sub_events : [],
+      start_date: defaultValues?.start_date ? defaultValues.start_date : new Date(),
+      end_date: defaultValues?.end_date ? defaultValues.end_date : new Date()
     },
     mode: 'onChange',
   });

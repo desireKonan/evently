@@ -6,16 +6,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDateRangeWithTime, formatDateWithTime } from "@/lib/date";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Download, Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { Check, Edit, Eye } from "lucide-react";
 
 interface ColumnsProps {
   onEdit: (event: string) => void;
   onView: (event: string) => void;
-  onPublish: (event: string) => void;
+  onPublish: ({ id }: {
+    id: string
+}) => void;
 }
 
 // This type is used to define the shape of our data.
-export const getColumns = (): ColumnDef<EventElementDTO>[] => [
+export const getColumns = ({
+    onEdit,
+    onView,
+    onPublish
+}: ColumnsProps): ColumnDef<EventElementDTO>[] => [
     {
         accessorKey: "name",
         header: "Nom de l'événement",
@@ -77,147 +83,51 @@ export const getColumns = (): ColumnDef<EventElementDTO>[] => [
         accessorKey: "actions",
         header: () => <div className="text-left"> Actions </div>,
         cell: ({ row }) => {
+            const event = row.original;
+            const isPublished = event.status === 'PUBLISHED';
+            const isDraft = event.status === 'DRAFT';
             return (
                 <div className="p-3">
-                    <Button variant="default" size="sm">
-                        Éditer
+                    <Button 
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onView(event.id)}
+                        className="h-8 w-8 p-0"
+                    >
+                        <Eye className="h-4 w-4" />
+                        <span className="sr-only">Voir</span>
                     </Button>
-                    <Button variant="secondary" size="sm">
-                        Publier
-                    </Button>
+                    {
+                        isDraft && (
+                            <Button 
+                                variant="outline"
+                                size="sm"
+                                onClick={() => onEdit(event.id)}
+                                className="h-8 w-8 p-0"
+                            >
+                                <Edit className="h-4 w-4" />
+                                <span className="sr-only">Éditer</span>
+                            </Button>
+                        )
+                    }
+
+                    {
+                        !isPublished && (
+                            <Button 
+                                variant="outline"
+                                size="sm"
+                                onClick={() => onPublish({
+                                    id: event.id
+                                })}
+                                className="h-8 w-8 p-0"
+                            >
+                                <Check className="h-4 w-4" />
+                                <span className="sr-only">Publier</span>
+                            </Button>
+                        )
+                    }
                 </div>
             );
         }
-    },
-    // {
-    //     id: "actions",
-    //     header: () => <div className="text-right">Actions</div>,
-    //     cell: ({ row }) => {
-    //     const event = row.original;
-    //     const isPublished = event.status === 'PUBLISHED';
-    //     const isDraft = event.status === 'DRAFT';
-
-    //     return (
-    //         <div className="flex justify-end space-x-2">
-    //         {/* Bouton Éditer toujours visible */}
-    //             <Button
-    //                 variant="outline"
-    //                 size="sm"
-    //                 onClick={() => onEdit(event.id)}
-    //                 className="h-8 w-8 p-0"
-    //             >
-    //                 <Edit className="h-4 w-4" />
-    //                 <span className="sr-only">Éditer</span>
-    //             </Button>
-
-    //         {/* Menu déroulant pour les actions supplémentaires */}
-    //         {/* <Dropdo>
-    //             <DropdownMenuTrigger asChild>
-    //             <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-    //                 <MoreHorizontal className="h-4 w-4" />
-    //                 <span className="sr-only">Menu</span>
-    //             </Button>
-    //             </DropdownMenuTrigger>
-    //             <DropdownMenuContent align="end">
-    //             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                
-    //             <DropdownMenuItem onClick={() => onView(event)}>
-    //                 <Eye className="h-4 w-4 mr-2" />
-    //                 Voir les détails
-    //             </DropdownMenuItem>
-
-    //             <DropdownMenuItem onClick={() => onDownloadQR(event)}>
-    //                 <Download className="h-4 w-4 mr-2" />
-    //                 Télécharger QR Code
-    //             </DropdownMenuItem>
-
-    //             <DropdownMenuSeparator />
-
-    //             {isDraft && (
-    //                 <DropdownMenuItem onClick={() => onPublish(event)}>
-    //                 <Badge className="bg-green-100 text-green-800 mr-2">Publier</Badge>
-    //                 Publier l'événement
-    //                 </DropdownMenuItem>
-    //             )}
-
-    //             <DropdownMenuSeparator />
-
-    //             <DropdownMenuItem 
-    //                 onClick={() => onDelete(event)}
-    //                 className="text-red-600 focus:text-red-600"
-    //             >
-    //                 <Trash2 className="h-4 w-4 mr-2" />
-    //                 Supprimer
-    //             </DropdownMenuItem>
-    //             </DropdownMenuContent>
-    //         </DropdownMenu> */}
-    //         </div>
-    //     );
-    //     }
-    //{
-    //     id: "actions",
-    //     header: () => <div className="text-right">Actions</div>,
-    //     cell: ({ row }) => {
-    //     const event = row.original;
-    //     const isPublished = event.status === 'PUBLISHED';
-    //     const isDraft = event.status === 'DRAFT';
-
-    //     return (
-    //         <div className="flex justify-end space-x-2">
-    //         {/* Bouton Éditer toujours visible */}
-    //             <Button
-    //                 variant="outline"
-    //                 size="sm"
-    //                 onClick={() => onEdit(event.id)}
-    //                 className="h-8 w-8 p-0"
-    //             >
-    //                 <Edit className="h-4 w-4" />
-    //                 <span className="sr-only">Éditer</span>
-    //             </Button>
-
-    //         {/* Menu déroulant pour les actions supplémentaires */}
-    //         {/* <Dropdo>
-    //             <DropdownMenuTrigger asChild>
-    //             <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-    //                 <MoreHorizontal className="h-4 w-4" />
-    //                 <span className="sr-only">Menu</span>
-    //             </Button>
-    //             </DropdownMenuTrigger>
-    //             <DropdownMenuContent align="end">
-    //             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                
-    //             <DropdownMenuItem onClick={() => onView(event)}>
-    //                 <Eye className="h-4 w-4 mr-2" />
-    //                 Voir les détails
-    //             </DropdownMenuItem>
-
-    //             <DropdownMenuItem onClick={() => onDownloadQR(event)}>
-    //                 <Download className="h-4 w-4 mr-2" />
-    //                 Télécharger QR Code
-    //             </DropdownMenuItem>
-
-    //             <DropdownMenuSeparator />
-
-    //             {isDraft && (
-    //                 <DropdownMenuItem onClick={() => onPublish(event)}>
-    //                 <Badge className="bg-green-100 text-green-800 mr-2">Publier</Badge>
-    //                 Publier l'événement
-    //                 </DropdownMenuItem>
-    //             )}
-
-    //             <DropdownMenuSeparator />
-
-    //             <DropdownMenuItem 
-    //                 onClick={() => onDelete(event)}
-    //                 className="text-red-600 focus:text-red-600"
-    //             >
-    //                 <Trash2 className="h-4 w-4 mr-2" />
-    //                 Supprimer
-    //             </DropdownMenuItem>
-    //             </DropdownMenuContent>
-    //         </DropdownMenu> */}
-    //         </div>
-    //     );
-    //     }
-    // } }
+    }
 ]

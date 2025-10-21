@@ -5,10 +5,11 @@ import { Plus } from 'lucide-react';
 import { DataTable } from '@/components/shared/DataTable';
 import{ getColumns } from './components/table/columns';
 import type { PaginatedResponse, PaginationParams } from '@/app/model/common.model';
-import type { EventDto, EventElementDTO, EventStatus, EventType } from '@/app/model/event.model';
-import { useQuery } from '@tanstack/react-query';
+import { EventStatus, type EventDto, type EventElementDTO, type EventType } from '@/app/model/event.model';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/authStore';
 
-// Définition des types TypeScript
 
 // Service pour récupérer les événements avec pagination
 const fetchEvents = async (params: PaginationParams): Promise<PaginatedResponse<EventDto>> => {
@@ -31,16 +32,48 @@ const fetchEvents = async (params: PaginationParams): Promise<PaginatedResponse<
 
 const EventList: React.FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [pagination, setPagination] = useState<PaginationParams>({
     page: 0,
     limit: 10,
   });
+  const { user } = useAuthStore();
 
   // Utilisation de React Query pour récupérer les événements avec pagination
   const { data: eventsData, isLoading, error, isError } = useQuery({
     queryKey: ['events', pagination],
     queryFn: () => fetchEvents(pagination),
     staleTime: 5 * 60 * 1000
+  });
+
+
+  const publishMutation = useMutation({
+    mutationFn: async ({ 
+      id
+    }: { 
+      id: string
+    }) => {
+      const eventStatus = user?.role === 'ADMIN' ? EventStatus.PUBLISHED : EventStatus.PENDING;
+      const response = await fetch(`${process.env.VITE_EVENTLY_URL}/events/${id}/validate`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: eventStatus }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Erreur lors de la publication');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast.success('Événement publié avec succès');
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
   });
 
    // Gestion du changement de page
@@ -52,6 +85,24 @@ const EventList: React.FC = () => {
   const handleLimitChange = (limit: number) => {
     setPagination({ page: 1, limit });
   };
+
+
+  const handlePublish = ({ id }: {id: string}) => {
+    if (window.confirm(`Publier l'événement "${id}" ?`)) {
+      publishMutation.mutate({
+        id
+      });
+    }
+  };
+
+  const handleView = (id: string) => {
+    navigate(`/events/${id}`);
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/events/${id}`);
+  };
+
 
    const tableData = eventsData?.data.map(event => ({
     id: event.id,
@@ -72,20 +123,11 @@ const EventList: React.FC = () => {
 
   } as unknown as EventElementDTO)) || [];
 
-  // const handlePublish = (event: EventDto) => {
-  //   if (window.confirm(`Publier l'événement "${event.name}" ?`)) {
-  //     publishMutation.mutate(event.id);
-  //   }
-  // };
-
-  // const columns = getColumns({
-  //   onEdit: handleEdit,
-  //   onView: handleView,
-  //   onDelete: handleDelete,
-  //   onDownloadQR: handleDownloadQR,
-  //   onPublish: handlePublish,
-  //   onUnpublish: handleUnpublish,
-  // });
+  const columns = getColumns({
+    onEdit: handleEdit,
+    onView: handleView,
+    onPublish: handlePublish,
+  });
 
   return (
     <Layout pageTitle="Liste des événements" buttons={
@@ -135,7 +177,7 @@ const EventList: React.FC = () => {
               <h2 className="text-xl font-bold text-foreground mb-4">Événements récents</h2>
               <div className="rounded-md border bg-white">
                   <DataTable 
-                    columns={getColumns()} 
+                    columns={columns} 
                     data={tableData}
                     pagination={eventsData}
                     onPageChange={handlePageChange} 
