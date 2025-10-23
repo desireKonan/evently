@@ -13,7 +13,7 @@ export interface RouteConfig {
 
 // Import des composants de page
 const LandingPage = React.lazy(() => import('@/pages/client/LandingPage'));
-//const EventDetailPage = React.lazy(() => import('@/pages/client/EventDetailPage'));
+const EventDetailPage = React.lazy(() => import('@/pages/client/EventDetailPage'));
 const ConfirmationPayment = React.lazy(() => import('@/pages/client/ConfirmationPage'));
 const LoginPage = React.lazy(() => import('@/pages/shared/LoginPage'));
 const DashboardPage = React.lazy(() => import('@/pages/admin/DashboardPage'));
@@ -42,9 +42,9 @@ export const routes: RouteConfig[] = [
     title: 'Explorer'
   },
   {
-    path: '/event/:id',
-    element: EventFormPage,
-    requiredRole: ['ORGANIZER'],
+    path: '/event/:id/details',
+    element: EventDetailPage,
+    isPublic: true,
     title: 'Détails de l\'événement'
   },
   {
@@ -77,7 +77,7 @@ export const routes: RouteConfig[] = [
     title: 'Créer un événement'
   },
   {
-    path: '/edit/event/:id',
+    path: '/event/:id/edit',
     element: EventFormPage,
     requiredRole: ['ORGANIZER'],
     title: 'Modifier l\'événement'
@@ -87,6 +87,12 @@ export const routes: RouteConfig[] = [
     element: EventListPage,
     requiredRole: ['ADMIN', 'ORGANIZER', 'USER'],
     title: 'Gestion des événements'
+  },
+  {
+    path: '/event/:id/view',
+    element: EventFormPage,
+    requiredRole: ['ORGANIZER'],
+    title: 'Détails de l\'événement'
   },
   {
     path: '/admin/users',

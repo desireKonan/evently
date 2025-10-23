@@ -90,7 +90,7 @@ export const useEventStore = create<EventState>()(
               {
                 method: "POST",
                 headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                  Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
                 },
                 body: formData,
               }
@@ -160,7 +160,7 @@ export const useEventStore = create<EventState>()(
             const response = await fetch(`/api/events/${eventId}`, {
               method: "POST",
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
               },
               body: formData,
             });

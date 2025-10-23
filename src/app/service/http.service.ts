@@ -17,7 +17,7 @@ class HttpService {
     this.api.interceptors.request.use(
       (config) => {
         // Récupération du token depuis le localStorage
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token || ""}`;
         }
@@ -42,13 +42,13 @@ class HttpService {
             const response = await this.api.post('/auth/refresh', { refreshToken });
             const { token } = response.data;
             
-            localStorage.setItem('token', token);
+            localStorage.setItem('accessToken', token);
             originalRequest.headers.Authorization = `Bearer ${token}`;
             
             return this.api(originalRequest);
           } catch (refreshError) {
             // Redirection vers la page de connexion en cas d'échec
-            localStorage.removeItem('token');
+            localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             window.location.href = '/login';
             return Promise.reject(refreshError);

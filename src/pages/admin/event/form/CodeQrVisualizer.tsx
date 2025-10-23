@@ -2,8 +2,19 @@ import { Download, Printer } from "lucide-react";
 import { useRef } from "react";
 import QRCode from 'react-qr-code';
 
-const CodeQrVisualizer: React.FC = () => {
+interface CodeQrVisualizerProps {
+    eventId?: string;
+    eventData?: any;
+}
+
+
+const CodeQrVisualizer: React.FC<CodeQrVisualizerProps> = ({ eventId, eventData }) => {
     const qrRef = useRef<HTMLDivElement>(null);
+
+    const eventName = eventData?.name || "Événement";
+    const eventLocation = eventData?.place || "Lieu non spécifié";
+    const eventDate = eventData?.start_date ? eventData.start_date.toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
+    const qrValue = eventId ? `${window.location.origin}/events/${eventId}` : "Aucun événement sélectionné";
 
     // Télécharger le QR code
     const downloadQRCode = () => {
@@ -22,7 +33,7 @@ const CodeQrVisualizer: React.FC = () => {
 
                     const pngFile = canvas.toDataURL('image/png');
                     const downloadLink = document.createElement('a');
-                    downloadLink.download = `qr-code-event-1.png`;
+                    downloadLink.download = `qr-code-${eventName.replace(/\s+/g, '-').toLowerCase()}.png`;
                     downloadLink.href = pngFile;
                     downloadLink.click();
                 };
@@ -30,37 +41,42 @@ const CodeQrVisualizer: React.FC = () => {
                 img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
             }
         }
-    };
+    }
 
     // Imprimer le QR code
     const printQRCode = () => {
         const printContent = `
-      <div style="text-align: center; font-family: Arial, sans-serif; padding: 20px;">
-        <h1 style="color: #0fa985; margin-bottom: 10px;">${"Event 1"}</h1>
-        <p style="margin-bottom: 20px; color: #666;">${new Date().getDate()} - ${"new Localtion"}</p>
-        <img src="${document.querySelector('svg')?.outerHTML ? 'data:image/svg+xml;base64,' + btoa(new XMLSerializer().serializeToString(document.querySelector('svg')!)) : ''}" 
-             style="max-width: 300px; height: auto; margin: 20px auto; display: block;" />
-        <p style="margin-top: 20px; color: #333;">Scannez ce QR code pour plus d'informations</p>
-      </div>
-    `;
+                <div style="text-align: center; font-family: Arial, sans-serif; padding: 20px;">
+                    <h1 style="color: #0fa985; margin-bottom: 10px;">${eventName}</h1>
+                    <p style="margin-bottom: 20px; color: #666;">${eventDate} - ${eventLocation}</p>
+                    <img src="${document.querySelector('svg')?.outerHTML ? 'data:image/svg+xml;base64,' + btoa(new XMLSerializer().serializeToString(document.querySelector('svg')!)) : ''}" 
+                        style="max-width: 300px; height: auto; margin: 20px auto; display: block;" />
+                    <p style="margin-top: 20px; color: #333;">Scannez ce QR code pour plus d'informations</p>
+                </div>
+        `;
 
         const printWindow = window.open('', '_blank');
         if (printWindow) {
             printWindow.document.write(`
-        <html>
-          <head>
-            <title>QR Code - Event 1</title>
-          </head>
-          <body>${printContent}</body>
-        </html>
-      `);
+                <html>
+                    <head>
+                        <title>QR Code - ${eventName}</title>
+                    </head>
+                    <body>${printContent}</body>
+                </html>
+            `);
             printWindow.document.close();
             printWindow.print();
         }
     };
 
+
     return (
         <div className="p-6 sm:p-8 rounded-lg shadow-sm space-y-6">
+             <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold text-event-foreground">{eventName}</h3>
+                <p className="text-sm text-event-muted-foreground">{eventDate} - {eventLocation}</p>
+            </div>
             <div className="w-full aspect-square bg-white rounded-lg p-4 flex items-center justify-center">
                 <div
                     ref={qrRef}
@@ -68,7 +84,7 @@ const CodeQrVisualizer: React.FC = () => {
                     style={{ backgroundColor: "black" }}
                 >
                     <QRCode
-                        value={"Event 1"}
+                        value={qrValue}
                         size={256}
                         bgColor={"#ffffff"}
                         fgColor={'#000000'}

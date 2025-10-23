@@ -8,11 +8,13 @@ import { useEventStore } from '@/stores/eventStore';
 interface SubEventsGeneratorProps {
   onSubEventsChange?: (subEvents: string[]) => void;
   initialSubEvents?: string[];
+  isDisabled?: boolean;
 }
 
 const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
   onSubEventsChange,
-  initialSubEvents = []
+  initialSubEvents = [],
+  isDisabled = false
 }) => {
   const [subEvents, setSubEvents] = useState<string[]>(initialSubEvents);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -103,6 +105,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
         <Button
           type="button"
           onClick={handleAddSubEvent}
+          disabled={isDisabled}
           className="bg-event-primary hover:bg-event-primary/90 text-white flex items-center gap-2"
         >
           <Plus size={20} />

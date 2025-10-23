@@ -10,7 +10,8 @@ import { useEventForm } from '@/hooks/use-form-event';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEvent } from '@/app/service/event.service';
-import type { EventFormData } from '@/app/schema/event.schema';
+import { ArrowLeft, Edit } from 'lucide-react';
+import type { EventDto } from '@/app/model/event.model';
 
 type EventFormPageMode = 'create' | 'edit' | 'view';
 
@@ -18,9 +19,9 @@ const EventFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const mode: EventFormPageMode = id ? (window.location.pathname.includes('/edit') ? 'edit' : 'view') : 'create';
-  const fetchEvent = useEvent(id);
+  const { data, isError } = useEvent(id);
   const { form, onSubmit, isLoading, error } = useEventForm({
-    defaultValues: mode !== 'create' ? fetchEvent.data?.data as EventFormData : undefined
+    defaultValues: mode !== 'create' ? data as EventDto : undefined
   });
 
   const handleSubmit = async (formData: FormData) => {
@@ -68,29 +69,48 @@ const EventFormPage: React.FC = () => {
 
   const handleCancel = () => {
     form.reset();
+    navigate(-1);
   };
 
-  // Charger l'événement si on est en mode édition/visualisation
-  useEffect(() => {
-    if (fetchEvent && mode !== 'create') {
-      // Réinitialiser le formulaire avec les données de l'événement
-      Object.entries(fetchEvent.data?.data as unknown as EventFormData).forEach(([key, value]) => {
-        form.setValue(key as any, value);
-      });
-    }
-  }, []);
+  const handleEdit = () => {
+    navigate(`/event/${id}/edit`);
+  };
 
 
   return (
     <Layout>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="w-full max-w-2xl mx-auto">
+          {/* Header avec bouton retour */}
+          <div className="flex items-center justify-between mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-event-foreground hover:text-event-primary"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Retour
+            </Button>
+
+            {/* Bouton Éditer en mode visualisation */}
+            {mode === 'view' && (
+              <Button
+                onClick={handleEdit}
+                className="flex items-center gap-2 bg-event-primary text-white hover:bg-event-secondary"
+              >
+                <Edit className="h-4 w-4" />
+                Modifier
+              </Button>
+            )}
+          </div>
+
+
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold tracking-tight text-event-foreground sm:text-5xl">
-              Créer un événement
+              {getPageTitle()}
             </h1>
             <p className="mt-3 text-lg text-event-muted-foreground">
-              Remplissez les informations ci-dessous pour mettre votre événement en ligne.
+              {getPageDescription()}
             </p>
           </div>
 
@@ -119,14 +139,14 @@ const EventFormPage: React.FC = () => {
                 <TabsContent value="event">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <EventForm form={form} />
+                      <EventForm form={form} isReadOnly={isReadOnly} />
                     </CardContent>
                   </Card>
                 </TabsContent>
                 <TabsContent value="sub-events">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <SubEventsForm form={form} />
+                      <SubEventsForm form={form} isReadOnly={isReadOnly} />
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -145,24 +165,33 @@ const EventFormPage: React.FC = () => {
                   </Card>
                 </TabsContent>
               </Tabs>
-              <div className="flex items-center justify-end gap-x-6 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={isLoading}
-                  className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
-                >
-                  Annuler
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
-                >
-                  {isLoading ? 'Création...' : 'Créer l\'événement'}
-                </Button>
-              </div>
+
+              {
+                !isReadOnly && (
+                  <div className="flex items-center justify-end gap-x-6 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                      disabled={isLoading}
+                      className="text-sm font-semibold leading-6 text-event-foreground hover:text-gray-600 transition-colors"
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="rounded-full bg-event-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-event-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-event-primary transition-colors"
+                    >
+                      { isLoading 
+                          ? (mode === 'edit' ? 'Modification...' : 'Création...') 
+                          : (mode === 'edit' ? 'Modifier l\'événement' : 'Créer l\'événement')
+                      }
+                    </Button>
+                  </div>
+                )
+              }
+
             </div>
           </form>
         </div>

@@ -16,6 +16,7 @@ interface PriceCategory extends Omit<PriceTicket, 'price'> {
 interface CategoricalPricingProps {
   onCategoriesChange?: (categories: PriceTicket[]) => void;
   initialCategories?: PriceTicket[];
+  isDisabled?: boolean;
 }
 
 // Couleurs prédéfinies pour les catégories
@@ -26,7 +27,8 @@ const PREDEFINED_COLORS = [
 
 const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
   onCategoriesChange,
-  initialCategories = []
+  initialCategories = [],
+  isDisabled = false
 }) => {
   const { currentEvent, addTicketPrices, updateTicketPrices, removeTicketPrices } = useEventStore();
   const [count, setCount] = useState<number>(0);
@@ -162,6 +164,7 @@ const CategoricalPricing: React.FC<CategoricalPricingProps> = ({
         
         <button
           onClick={addCategory}
+          disabled={isDisabled}
           type="button"
           className="bg-event-primary hover:bg-event-primary/90 text-sm text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
         >

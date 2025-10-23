@@ -20,7 +20,7 @@ const fetchEvents = async (params: PaginationParams): Promise<PaginatedResponse<
 
   const response = await fetch(`${process.env.VITE_EVENTLY_URL}/events/all?${queryParams}`, {
     headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ''}`,
     },
   });
   if (!response.ok) {
@@ -96,11 +96,11 @@ const EventList: React.FC = () => {
   };
 
   const handleView = (id: string) => {
-    navigate(`/events/${id}`);
+    navigate(`/event/${id}/view`);
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/events/${id}`);
+    navigate(`/event/${id}/edit`);
   };
 
 

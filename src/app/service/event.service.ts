@@ -1,13 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import httpService from "./http.service";
+import type { EventDto } from "../model/event.model";
 
 // Hook pour récupérer un événement par ID
 export const useEvent = (id: string | undefined) => {
   return useQuery({
     queryKey: ['event', id],
-    queryFn: () => {
+    queryFn: async() => {
       if (!id) throw new Error('ID d\'événement requis');
-      return httpService.get(`events/${id}`);
+      const response = await httpService.get<EventDto>(`events/${id}`);
+      console.log('Réponse: ', response);
+      if(response.status == 200 || response.status == 304) {
+        return response.data;
+      }
+
+      return null;
     },
     enabled: !!id, // Ne s'exécute que si l'ID est défini
     staleTime: 5 * 60 * 1000, // 5 minutes

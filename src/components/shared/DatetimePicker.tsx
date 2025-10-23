@@ -10,9 +10,10 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 interface DateTimePickerProps {
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
+  disabled?: boolean;
 }
 
-export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
+export function DateTimePicker({ date, setDate, disabled = false }: DateTimePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -47,6 +48,7 @@ export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
                   setDate(newDate);
                 }
               }}
+              disabled={disabled}
             />
           </div>
         </div>

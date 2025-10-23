@@ -4,9 +4,10 @@ import { eventFormSchema, type EventFormData, type PriceTicket } from '@/app/sch
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEventStore } from '@/stores/eventStore';
 import { useAuthStore } from '@/stores/authStore';
+import type { EventDto } from '@/app/model/event.model';
 
 interface UseEventFormProps {
-  defaultValues?: Partial<EventFormData>;
+  defaultValues?: Partial<EventDto>;
 }
 
 export const useEventForm = ({ defaultValues }: UseEventFormProps = {}) => {
@@ -23,15 +24,14 @@ export const useEventForm = ({ defaultValues }: UseEventFormProps = {}) => {
       organizer_id: defaultValues?.organizer_id ? defaultValues.organizer_id : '',
       type: defaultValues?.type ? defaultValues.type : 'B2B',
       limit: defaultValues?.limit ? defaultValues.limit : 10,
-      images: defaultValues?.images ? defaultValues.images : [],
+      images: defaultValues?.image_path ? [ new File([], defaultValues.image_path) ] : [],
       ticket_prices: defaultValues?.ticket_prices ? defaultValues.ticket_prices : [],
       sub_events: defaultValues?.sub_events ? defaultValues.sub_events : [],
       start_date: defaultValues?.start_date ? defaultValues.start_date : new Date(),
       end_date: defaultValues?.end_date ? defaultValues.end_date : new Date()
     },
-    mode: 'onChange',
   });
-
+  
   const onSubmit = async (data: EventFormData) => {
     if (!isAuthenticated) {
       form.setError('root', {
