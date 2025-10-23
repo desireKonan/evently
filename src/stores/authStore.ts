@@ -86,6 +86,9 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: false,
           });
+
+          /// On retourne à la page de garde.
+          window.location.href = '/explore';
         },
 
         clearError: () => set({ error: null }),

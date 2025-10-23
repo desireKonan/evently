@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { EventlyLogo } from '@/components/icons/EventlyLogo';
 import { Link } from 'react-router-dom';
 import { useSidebarSelection } from '@/contexts/SidebarContext';
+import { useAuthStore } from '@/stores/authStore';
 
 interface NavItem {
   id: string;
@@ -45,6 +46,8 @@ const AdminSidebar: React.FC = () => {
   ];
 
   const { selectedItem, setSelectedItem } = useSidebarSelection();
+
+  const { user, logout } = useAuthStore();
 
   return (
     <Sidebar variant="sidebar" className="bg-white">
@@ -79,10 +82,10 @@ const AdminSidebar: React.FC = () => {
             style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuCfimSwHikVoC7UwmMoZ674nuzfUwX6XiA6dHXUC2EH7Pbk9_vGxLjryQ-sIxEmZ4QE_ys62vijpgoO9xYg5pOy8g7mTaWhtL_FofZ3lYOtf0zUe1Ub_aBt9vIAR43-NhrAUByLP1h5Bt-6NLnJU3KJGcGqKj6d1MNIO4k3-PGEhZP0aQEaTHINIOv5IeZFVLnRTlzFG6DQRWu3_6XceYfpX029ldCuTCl0bsGp-geSH28uB4H9agtXFZTDzwckSK2P4F4wq9c3Ckw")` }}
           />
           <div className="flex flex-col">
-            <p className="text-sm font-medium text-gray-800">Admin User</p>
-            <p className="text-xs text-gray-500">admin@evently.com</p>
+            <p className="text-sm font-medium text-gray-800"> { user?.role } </p>
+            <p className="text-xs text-gray-500"> { user?.email } </p>
           </div>
-          <Button variant="ghost" className="ml-auto text-gray-500 hover:text-gray-800 transition-colors p-1">
+          <Button onClick={logout} variant="ghost" className="ml-auto text-gray-500 hover:text-gray-800 transition-colors p-1">
               <LogOut className="w-5" />
           </Button>
         </div>

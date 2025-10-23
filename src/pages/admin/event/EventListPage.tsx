@@ -59,7 +59,7 @@ const EventList: React.FC = () => {
         body: JSON.stringify({ status: eventStatus }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
       if (!response.ok) {
