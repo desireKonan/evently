@@ -9,6 +9,7 @@ import type {
 } from "../model/common.model";
 import { useState } from "react";
 
+
 const fetchEvents = async (params: PaginationParams): Promise<PaginatedResponse<EventDto>> => {
   const queryParams = new URLSearchParams({
     page: params.page.toString(),
@@ -39,6 +40,39 @@ const fetchPublishedEvents = async (params: PaginationParams): Promise<Paginated
   return response.data;
 };
 
+const fetchEventById = async (id: string | undefined): Promise<EventDto | null> => {
+  if (!id) throw new Error("ID d'événement requis");
+        
+  const response = await httpService.get<EventDto>(`events/${id}`);
+  if (response.status == 200 || response.status == 304) {
+    return response.data;
+  }
+  return null;
+};
+
+const publishedEventByUser = async ({ id, user }: { id: string; user: User | null }) => {
+  const eventStatus = user?.role === "ADMIN" ? EventStatus.PUBLISHED : EventStatus.PENDING;
+  const response = await httpService.put(`/events/${id}/validate`, {
+    status: eventStatus
+  });
+  if (response.status !== 200) {
+    throw new Error("Erreur lrs de la publication");
+  }
+  return response.data;
+};
+
+// {
+//   const eventStatus = user?.role === "ADMIN" ? EventStatus.PUBLISHED : EventStatus.PENDING;
+//   const response = await httpService.put(`/events/${id}/validate`, {
+//     status: eventStatus
+//   });
+//   if (response.status !== 200) {
+//     throw new Error("Erreur lrs de la publication");
+//   }
+//   return response.data;
+// },
+
+
 /// Http Event Service utilisant (Tanstack Query).
 export const useEventService = () => {
   const queryClient = useQueryClient();
@@ -51,32 +85,14 @@ export const useEventService = () => {
   const fetchEvent = (id: string | undefined) => {
     return useQuery({
       queryKey: ["event", id],
-      queryFn: async () => {
-        if (!id) throw new Error("ID d'événement requis");
-        const response = await httpService.get<EventDto>(`events/${id}`);
-        console.log("Réponse: ", response);
-        if (response.status == 200 || response.status == 304) {
-          return response.data;
-        }
-
-        return null;
-      },
+      queryFn: async () => fetchEventById(id),
       enabled: !!id, // Ne s'exécute que si l'ID est défini
       staleTime: 5 * 60 * 1000, // 5 minutes
     });
   };
 
   const publishEventMutation = useMutation({
-    mutationFn: async ({ id, user }: { id: string; user: User | null }) => {
-      const eventStatus = user?.role === "ADMIN" ? EventStatus.PUBLISHED : EventStatus.PENDING;
-      const response = await httpService.put(`/events/${id}/validate`, {
-        status: eventStatus
-      });
-      if (response.status !== 200) {
-        throw new Error("Erreur lrs de la publication");
-      }
-      return response.data;
-    },
+    mutationFn: async ({ id, user }: { id: string; user: User | null }) => publishedEventByUser({id, user }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success("Événement publié avec succès");

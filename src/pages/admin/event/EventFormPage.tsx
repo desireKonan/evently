@@ -29,7 +29,7 @@ const EventFormPage: React.FC = () => {
   });
   
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (_: FormData) => {
     try {
       await onSubmit(form.getValues());
       form.reset();
@@ -83,12 +83,12 @@ const EventFormPage: React.FC = () => {
   if(isError) {
     return (
       <LoadingPage label="Erreur dans le chargement de la donnée !" />
-    )
+    );
   }
 
   /// On afficher les données.
   if(isEventLoading) {
-    return <LoadingPage label="Formulaire n'est pas encore chargée" />
+    return <LoadingPage label="Formulaire n'est pas encore chargée" />;
   }
 
   return (
