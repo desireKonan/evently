@@ -1,43 +1,113 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import httpService from "./http.service";
-import type { EventDto } from "../model/event.model";
+import { EventStatus, type EventDto } from "../model/event.model";
+import type { User } from "../model/user.model";
+import { toast } from "sonner";
+import type {
+  PaginationParams,
+  PaginatedResponse,
+} from "../model/common.model";
+import { useState } from "react";
 
-// Hook pour récupérer un événement par ID
-export const useEvent = (id: string | undefined) => {
-  return useQuery({
-    queryKey: ['event', id],
-    queryFn: async() => {
-      if (!id) throw new Error('ID d\'événement requis');
-      const response = await httpService.get<EventDto>(`events/${id}`);
-      console.log('Réponse: ', response);
-      if(response.status == 200 || response.status == 304) {
-        return response.data;
-      }
-
-      return null;
-    },
-    enabled: !!id, // Ne s'exécute que si l'ID est défini
-    staleTime: 5 * 60 * 1000, // 5 minutes
+const fetchEvents = async (params: PaginationParams): Promise<PaginatedResponse<EventDto>> => {
+  const queryParams = new URLSearchParams({
+    page: params.page.toString(),
+    limit: params.limit.toString(),
   });
+
+  const response = await httpService.get<PaginatedResponse<EventDto>>(
+    `/events/all?${queryParams}`
+  );
+  if (response.status !== 200) {
+    throw new Error("Erreur lors de la récupération des événements");
+  }
+  return response.data;
 };
 
+const fetchPublishedEvents = async (params: PaginationParams): Promise<PaginatedResponse<EventDto>> => {
+  const queryParams = new URLSearchParams({
+    page: params.page.toString(),
+    limit: params.limit.toString(),
+  });
 
-// Hook pour modifier un événement
-// export const useUpdateEvent = () => {
-//   const queryClient = useQueryClient();
+  const response = await httpService.get<PaginatedResponse<EventDto>>(
+    `/events/published?${queryParams}`
+  );
+  if (response.status !== 200) {
+    throw new Error("Erreur lors de la récupération des événements");
+  }
+  return response.data;
+};
 
-//   return useMutation({
-//     mutationFn: ({ id, data }: { id: string; data: Partial<EventFormData> }) =>
-//       httpService.put(`events/`id, data),
-//     onSuccess: (data, variables) => {
-//       // Mettre à jour le cache de l'événement spécifique
-//       queryClient.setQueryData(['event', variables.id], data);
-//       // Invalider la liste des événements
-//       queryClient.invalidateQueries({ queryKey: ['events'] });
-//       toast.success('Événement modifié avec succès !');
-//     },
-//     onError: (error: Error) => {
-//       toast.error(`Erreur lors de la modification: ${error.message}`);
-//     },
-//   });
-// };
+/// Http Event Service utilisant (Tanstack Query).
+export const useEventService = () => {
+  const queryClient = useQueryClient();
+  const [pagination, setPagination] = useState<PaginationParams>({
+    page: 0,
+    limit: 10,
+  });
+
+  // Hook pour récupérer un événement par ID
+  const fetchEvent = (id: string | undefined) => {
+    return useQuery({
+      queryKey: ["event", id],
+      queryFn: async () => {
+        if (!id) throw new Error("ID d'événement requis");
+        const response = await httpService.get<EventDto>(`events/${id}`);
+        console.log("Réponse: ", response);
+        if (response.status == 200 || response.status == 304) {
+          return response.data;
+        }
+
+        return null;
+      },
+      enabled: !!id, // Ne s'exécute que si l'ID est défini
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+  };
+
+  const publishEventMutation = useMutation({
+    mutationFn: async ({ id, user }: { id: string; user: User | null }) => {
+      const eventStatus = user?.role === "ADMIN" ? EventStatus.PUBLISHED : EventStatus.PENDING;
+      const response = await httpService.put(`/events/${id}/validate`, {
+        status: eventStatus
+      });
+      if (response.status !== 200) {
+        throw new Error("Erreur lrs de la publication");
+      }
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+      toast.success("Événement publié avec succès");
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const fetchAllEvents = () => {
+    return useQuery({
+      queryKey: ["events", pagination],
+      queryFn: () => fetchEvents(pagination),
+      staleTime: 5 * 60 * 1000,
+    });
+  };
+
+  const fetchAllPublishedEvents = () => {
+    return useQuery({
+      queryKey: ["published-events", pagination],
+      queryFn: () => fetchPublishedEvents(pagination),
+      staleTime: 5 * 60 * 1000,
+    });
+  };
+
+  return {
+    fetchEvent,
+    publishEventMutation,
+    fetchAllEvents,
+    fetchAllPublishedEvents,
+    pagination,
+    setPagination,
+  };
+};

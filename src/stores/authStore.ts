@@ -1,4 +1,5 @@
 import type { User } from "@/app/model/user.model";
+import httpService from "@/app/service/http.service";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -26,25 +27,15 @@ export const useAuthStore = create<AuthState>()(
 
           try {
             // Appel à votre API de connexion
-            const response = await fetch(
-              `${process.env.VITE_EVENTLY_URL}/auth/login`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-              }
-            );
+            const response = await httpService.post('/auth/login', {
+              email, password
+            });
 
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.message || "Erreur de connexion");
+            if (response.status !== 200) {
+              throw new Error(response.request.error || "Erreur de connexion");
             }
 
-            const data = await response.json();
-
-            const { accessToken, refreshToken, expiresDate, ...user } = data;
+            const { accessToken, refreshToken, expiresDate, ...user } = response.data as unknown as any;
 
             // Stockage des données d'authentification
             set({
@@ -54,7 +45,6 @@ export const useAuthStore = create<AuthState>()(
             });
 
             // Stockage dans le localStorage si nécessaire
-            localStorage.setItem("user", JSON.stringify(user));
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", accessToken);
             localStorage.setItem("expiredAt", expiresDate);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import Layout from '@/components/layout/client/EventLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
@@ -9,7 +9,7 @@ import BadgeVisualizer from './form/BadgeVisualizer';
 import { useEventForm } from '@/hooks/use-form-event';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEvent } from '@/app/service/event.service';
+import { useEventService } from '@/app/service/event.service';
 import { ArrowLeft, Edit } from 'lucide-react';
 import type { EventDto } from '@/app/model/event.model';
 
@@ -19,7 +19,8 @@ const EventFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const mode: EventFormPageMode = id ? (window.location.pathname.includes('/edit') ? 'edit' : 'view') : 'create';
-  const { data, isError } = useEvent(id);
+  const { fetchEvent } = useEventService();
+  const { data } = fetchEvent(id);
   const { form, onSubmit, isLoading, error } = useEventForm({
     defaultValues: mode !== 'create' ? data as EventDto : undefined
   });
@@ -191,7 +192,6 @@ const EventFormPage: React.FC = () => {
                   </div>
                 )
               }
-
             </div>
           </form>
         </div>

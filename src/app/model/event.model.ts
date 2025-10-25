@@ -69,6 +69,24 @@ export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus];
 
 export type EventType = 'CONFERENCE' | 'SEMINAR' | 'LIVING_ROOM' | 'WORKSHOP' | 'WEBINAR' | 'B2B' | 'FORUM' | 'GALA_DINNER' | 'PRIVATE_EVENING' | 'OTHER';
 
+export interface EventTypeOption {
+  value: EventType;
+  label: string;
+}
+
+export const EVENT_TYPE_OPTIONS: EventTypeOption[] = [
+  { value: 'CONFERENCE', label: 'Conférence' },
+  { value: 'SEMINAR', label: 'Séminaire' },
+  { value: 'LIVING_ROOM', label: 'Salon' },
+  { value: 'WORKSHOP', label: 'Atelier' },
+  { value: 'WEBINAR', label: 'Webinaire' },
+  { value: 'B2B', label: 'Événement B2B' },
+  { value: 'FORUM', label: 'Forum' },
+  { value: 'GALA_DINNER', label: 'Dîner de gala' },
+  { value: 'PRIVATE_EVENING', label: 'Soirée privée' },
+  { value: 'OTHER', label: 'Autre' }
+];
+
 
 export const getStatusConfig = (status: EventStatus) => {
   const statusConfigs = {

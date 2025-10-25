@@ -16,10 +16,14 @@ class HttpService {
     // Intercepteur pour les requêtes
     this.api.interceptors.request.use(
       (config) => {
+        if (this.isTokenExpiringSoon()) {
+          this.performTokenRefresh();
+        }
+
         // Récupération du token depuis le localStorage
         const token = localStorage.getItem('accessToken');
         if (token) {
-          config.headers.Authorization = `Bearer ${token || ""}`;
+          config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
@@ -48,8 +52,7 @@ class HttpService {
             return this.api(originalRequest);
           } catch (refreshError) {
             // Redirection vers la page de connexion en cas d'échec
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            this.clearTokens();
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }
@@ -58,6 +61,75 @@ class HttpService {
         return Promise.reject(error);
       }
     );
+  }
+
+  /**
+   * Vérifie si le token expire dans les 5 minutes
+   */
+  private isTokenExpiringSoon(): boolean {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = payload.exp * 1000; // Convertir en millisecondes
+      const currentTime = Date.now();
+      const bufferTime = 5 * 60 * 1000; // 5 minutes en millisecondes
+
+      return (expirationTime - currentTime) < bufferTime;
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Exécute la requête de rafraîchissement du token
+   */
+  private async performTokenRefresh(): Promise<string> {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const response = await this.api.post('/auth/refresh', { refreshToken });
+      const { token, refreshToken: newRefreshToken } = response.data;
+      
+      localStorage.setItem('accessToken', token);
+      if (newRefreshToken) {
+        localStorage.setItem('refreshToken', newRefreshToken);
+      }
+      
+      return token;
+    } catch (error) {
+      this.clearTokens();
+      throw error;
+    }
+  }
+
+  /**
+   * Supprime les tokens du localStorage
+   */
+  private clearTokens(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }
+
+  /**
+   * Décode le token pour obtenir les informations (utilitaire)
+   */
+  public getTokenInfo(): { exp: number; iat: number; [key: string]: any } | null {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
   }
 
   public static getInstance(): HttpService {

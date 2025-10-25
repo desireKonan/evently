@@ -1,80 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { DataTable } from '@/components/shared/DataTable';
 import{ getColumns } from './components/table/columns';
-import type { PaginatedResponse, PaginationParams } from '@/app/model/common.model';
-import { EventStatus, type EventDto, type EventElementDTO, type EventType } from '@/app/model/event.model';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { EventStatus, type EventElementDTO, type EventType } from '@/app/model/event.model';
 import { useAuthStore } from '@/stores/authStore';
-
-
-// Service pour récupérer les événements avec pagination
-const fetchEvents = async (params: PaginationParams): Promise<PaginatedResponse<EventDto>> => {
-  const queryParams = new URLSearchParams({
-    page: params.page.toString(),
-    limit: params.limit.toString(),
-  });
-
-  const response = await fetch(`${process.env.VITE_EVENTLY_URL}/events/all?${queryParams}`, {
-    headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ''}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Erreur lors de la récupération des événements');
-  }
-  return response.json();
-};
+import { useEventService } from '@/app/service/event.service';
 
 
 const EventList: React.FC = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [pagination, setPagination] = useState<PaginationParams>({
-    page: 0,
-    limit: 10,
-  });
+  const { setPagination, publishEventMutation, fetchAllEvents } = useEventService();
   const { user } = useAuthStore();
 
   // Utilisation de React Query pour récupérer les événements avec pagination
-  const { data: eventsData, isLoading, error, isError } = useQuery({
-    queryKey: ['events', pagination],
-    queryFn: () => fetchEvents(pagination),
-    staleTime: 5 * 60 * 1000
-  });
+  const { data: eventsData, isLoading, error, isError } = fetchAllEvents();
 
-
-  const publishMutation = useMutation({
-    mutationFn: async ({ 
-      id
-    }: { 
-      id: string
-    }) => {
-      const eventStatus = user?.role === 'ADMIN' ? EventStatus.PUBLISHED : EventStatus.PENDING;
-      const response = await fetch(`${process.env.VITE_EVENTLY_URL}/events/${id}/validate`, {
-        method: 'PUT',
-        body: JSON.stringify({ status: eventStatus }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Erreur lors de la publication');
-      }
-      return response.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      toast.success('Événement publié avec succès');
-    },
-    onError: (error) => {
-      toast.error(`Erreur: ${error.message}`);
-    },
-  });
 
    // Gestion du changement de page
   const handlePageChange = (page: number) => {
@@ -89,8 +31,9 @@ const EventList: React.FC = () => {
 
   const handlePublish = ({ id }: {id: string}) => {
     if (window.confirm(`Publier l'événement "${id}" ?`)) {
-      publishMutation.mutate({
-        id
+      publishEventMutation.mutate({
+        id,
+        user
       });
     }
   };

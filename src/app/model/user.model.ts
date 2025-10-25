@@ -6,7 +6,6 @@ export type User = {
     email: string,
     contacts: string[],
     role: UserRole,
-    access_token: string,
     code_qr: string,
     status: string,
     verified_at?: Date | undefined,

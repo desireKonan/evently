@@ -3,14 +3,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { EventCard } from '@/components/shared/EventCard';
 import EventLayout from '@/components/layout/client/EventLayout';
-import { allEvents, favoriteEvents } from '@/mock/event.mock';
+import { useEventService } from '@/app/service/event.service';
+import { EVENT_TYPE_OPTIONS } from '@/app/model/event.model';
 
 const LandingPage = () => {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('OTHER');
 
-  const filteredEvents = activeTab === "all"
-    ? allEvents
-    : allEvents.filter(event => event.category === activeTab);
+  const { fetchAllPublishedEvents } = useEventService();
+  const { data: events, isLoading, isError } = fetchAllPublishedEvents();
+  
 
   const toggleFavorite = (id: string) => {
     // Logique pour gérer les favoris
@@ -25,14 +26,19 @@ const LandingPage = () => {
           {/* Favorite Events Section */}
           <div className="space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Vos Événements Favoris</h2>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Vos Événements</h2>
               <a className="text-sm font-medium text-event-primary hover:text-opacity-80" href="#">Tout voir</a>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {favoriteEvents.map(event => (
-                <EventCard key={event.id} event={event} onToggleFavorite={toggleFavorite} />
-              ))}
-            </div>
+            {
+              !isLoading && !isError && events && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  { events?.data.map(event => (
+                      <EventCard key={event.id} event={event} onToggleFavorite={toggleFavorite} />
+                  )) }
+                </div>
+              )
+            }
+            
           </div>
 
           {/* Upcoming Events Header */}
@@ -46,19 +52,25 @@ const LandingPage = () => {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0 h-auto">
                 <TabsTrigger value="all" className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium">Tous les événements</TabsTrigger>
-                <TabsTrigger value="music" className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium">Musique</TabsTrigger>
-                <TabsTrigger value="tech" className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium">Tech</TabsTrigger>
-                <TabsTrigger value="sports" className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium">Sports</TabsTrigger>
+                {
+                  EVENT_TYPE_OPTIONS.map(eventType => (
+                    <TabsTrigger value={eventType.value} className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium"> { eventType.label } </TabsTrigger>                
+                  ))
+                }
               </TabsList>
             </Tabs>
           </div>
 
           {/* All Events Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredEvents.map(event => (
-              <EventCard key={event.id} event={event} onToggleFavorite={toggleFavorite} />
-            ))}
-          </div>
+          {
+            !isLoading && !isError && events && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                { events?.data.map(event => (
+                  <EventCard key={event.id} event={event} onToggleFavorite={toggleFavorite} />
+                )) }
+              </div>
+            )
+          }
 
           {/* Pagination */}
           <Pagination>
