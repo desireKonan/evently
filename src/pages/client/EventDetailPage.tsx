@@ -5,6 +5,7 @@ import EventlyIcon from '@/components/shared/EventlyIcons';
 import { useEventService } from '@/app/service/event.service';
 import { useParams } from 'react-router-dom';
 import { dateFormat, timeFormat } from '@/lib/date';
+import { LoadingPage } from '@/config/LoadingPage';
 
 interface EventDetailPageProps {
   // Props could be added for dynamic data
@@ -16,16 +17,15 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
   const { id } = useParams<{ id :string; }>();
   const { data: event, isError, isLoading } = fetchEvent(id);
 
-  console.log('Event: ', event);
-
-
+  if(isError) {
+    return (
+      <LoadingPage label="Erreur dans le chargement de la donnée !" />
+    )
+  }
 
   if(isLoading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--secondary-color)]"></div>
-        <span className="ml-2">Chargement des événements...</span>
-      </div>
+      <LoadingPage label='Chargement des événements...' />
     );
   }
 

@@ -7,6 +7,7 @@ import{ getColumns } from './components/table/columns';
 import { EventStatus, type EventElementDTO, type EventType } from '@/app/model/event.model';
 import { useAuthStore } from '@/stores/authStore';
 import { useEventService } from '@/app/service/event.service';
+import { LoadingPage } from '@/config/LoadingPage';
 
 
 const EventList: React.FC = () => {
@@ -87,10 +88,7 @@ const EventList: React.FC = () => {
       <div className="p-10">
         {/* États de chargement et d'erreur */}
         {isLoading && (
-          <div className="flex justify-center items-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--secondary-color)]"></div>
-            <span className="ml-2">Chargement des événements...</span>
-          </div>
+          <LoadingPage label='Chargement des événements...' />
         )}
 
         {isError && (

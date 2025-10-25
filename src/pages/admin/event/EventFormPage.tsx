@@ -12,18 +12,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEventService } from '@/app/service/event.service';
 import { ArrowLeft, Edit } from 'lucide-react';
 import type { EventDto } from '@/app/model/event.model';
+import { LoadingPage } from '@/config/LoadingPage';
 
 type EventFormPageMode = 'create' | 'edit' | 'view';
 
 const EventFormPage: React.FC = () => {
   const navigate = useNavigate();
+  const { fetchEvent } = useEventService();
   const { id } = useParams<{ id: string }>();
   const mode: EventFormPageMode = id ? (window.location.pathname.includes('/edit') ? 'edit' : 'view') : 'create';
-  const { fetchEvent } = useEventService();
-  const { data } = fetchEvent(id);
+  const { data, isLoading: isEventLoading, isError } = fetchEvent(id);
+  const isReadOnly = mode === 'view';
+  
   const { form, onSubmit, isLoading, error } = useEventForm({
-    defaultValues: mode !== 'create' ? data as EventDto : undefined
+    defaultValues: (!isEventLoading && mode !== 'create') ? data as EventDto : undefined
   });
+  
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -66,8 +70,6 @@ const EventFormPage: React.FC = () => {
     }
   };
 
-  const isReadOnly = mode === 'view';
-
   const handleCancel = () => {
     form.reset();
     navigate(-1);
@@ -77,6 +79,17 @@ const EventFormPage: React.FC = () => {
     navigate(`/event/${id}/edit`);
   };
 
+
+  if(isError) {
+    return (
+      <LoadingPage label="Erreur dans le chargement de la donnée !" />
+    )
+  }
+
+  /// On afficher les données.
+  if(isEventLoading) {
+    return <LoadingPage label="Formulaire n'est pas encore chargée" />
+  }
 
   return (
     <Layout>
