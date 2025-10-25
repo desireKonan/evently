@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 const TODAY = new Date();
 
 export const getDate = () => {
@@ -62,3 +64,8 @@ export const formatDateTimeShort = (dateString: string | Date): string => {
         minute: '2-digit'
     });
 };
+
+
+export const dateFormat = (date: Date | null | undefined) => format(date ?? new Date(), "dd-MM-yyyy");
+
+export const timeFormat = (date: Date | null | undefined) => format(date ?? new Date(), "HH:ii");

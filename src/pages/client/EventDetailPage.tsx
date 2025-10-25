@@ -2,29 +2,32 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import EventLayout from '@/components/layout/client/EventLayout';
 import EventlyIcon from '@/components/shared/EventlyIcons';
+import { useEventService } from '@/app/service/event.service';
+import { useParams } from 'react-router-dom';
+import { dateFormat, timeFormat } from '@/lib/date';
 
 interface EventDetailPageProps {
   // Props could be added for dynamic data
 }
 
 const EventDetailPage: React.FC<EventDetailPageProps> = () => {
-  // This data would typically come from an API or props
-  const eventData = {
-    id: 1,
-    title: "Conférence sur la technologie",
-    description: "Rejoignez-nous pour une journée d'exploration des dernières tendances technologiques, des conférences inspirantes et des opportunités de réseautage avec des leaders de l'industrie. Cet événement est conçu pour les développeurs, les chefs de produit et les passionnés de technologie qui souhaitent se tenir au courant des dernières innovations.",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAMuOarNCPvV81eqyyRakFp4dsFy8JtwXX_sQMBXrMRLpaVmwoH_GO75U0EUjNXd_WW9Nbzbs0sMDgS6F2OPAQsmJgpAImxun-uGjs0MPlY_cTQRnu1pYsdTV9uSUO8vwzBGSsqN4mlwoiQ4QCDNTNf4OvJ-9dzdpxUiONUE82KfR9P9vYcqpMTHOuma3BXqzpdMKcLHjmNNj1hF_9y00digDCfM43Ph0MT1UaRVaslu21yWE7h_Z8-8UxdJl6wXfaGTGkyU8Aw7GI",
-    date: "15 juillet 2024",
-    time: "9h00 - 17h00",
-    location: "Centre de conférences de la ville",
-    price: "à partir de 50 €",
-    category: "Technology"
-  };
+  /// On va charger les informations les détails d'une 
+  const { fetchEvent } = useEventService();
+  const { id } = useParams<{ id :string; }>();
+  const { data: event, isError, isLoading } = fetchEvent(id);
 
-  const handleBuyTickets = () => {
-    // Logic for buying tickets
-    console.log("Acheter des billets pour l'événement:", eventData.id);
-  };
+  console.log('Event: ', event);
+
+
+
+  if(isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--secondary-color)]"></div>
+        <span className="ml-2">Chargement des événements...</span>
+      </div>
+    );
+  }
 
   return (
     <EventLayout>
@@ -35,7 +38,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
             Événements
           </a>
           <EventlyIcon name="chevron_right" className="text-base" />
-          <span className="text-event-foreground font-medium">{eventData.title}</span>
+          <span className="text-event-foreground font-medium">{event?.name}</span>
         </div>
 
         {/* Main content grid */}
@@ -45,14 +48,14 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
             {/* Event image */}
             <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-8 shadow-lg shadow-gray-300">
               <img 
-                alt={eventData.title} 
+                alt={event?.name} 
                 className="absolute inset-0 w-full h-full object-cover" 
-                src={eventData.image} 
+                src={event?.image_path} 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
               <div className="absolute bottom-0 left-0 p-6">
                 <h1 className="text-white text-3xl md:text-4xl font-bold leading-tight">
-                  {eventData.title}
+                  {event?.name}
                 </h1>
               </div>
             </div>
@@ -63,7 +66,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
                 À propos de l'événement
               </h2>
               <p className="text-event-muted-foreground text-base font-normal leading-relaxed">
-                {eventData.description}
+                {event?.description}
               </p>
             </div>
 
@@ -88,7 +91,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
                   </div>
                   <div>
                     <p className="text-event-muted-foreground text-sm font-medium leading-normal">Date</p>
-                    <p className="text-event-foreground text-base font-medium leading-normal">{eventData.date}</p>
+                    <p className="text-event-foreground text-base font-medium leading-normal">{ dateFormat(event?.start_date) }</p>
                   </div>
                 </div>
 
@@ -99,7 +102,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
                   </div>
                   <div>
                     <p className="text-event-muted-foreground text-sm font-medium leading-normal">Heure</p>
-                    <p className="text-event-foreground text-base font-medium leading-normal">{eventData.time}</p>
+                    <p className="text-event-foreground text-base font-medium leading-normal"> { timeFormat(event?.start_date) } - { timeFormat(event?.end_date) }</p>
                   </div>
                 </div>
 
@@ -110,26 +113,31 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
                   </div>
                   <div>
                     <p className="text-event-muted-foreground text-sm font-medium leading-normal">Lieu</p>
-                    <p className="text-event-foreground text-base font-medium leading-normal">{eventData.location}</p>
+                    <p className="text-event-foreground text-base font-medium leading-normal">{ event?.place }</p>
                   </div>
                 </div>
 
                 {/* Price */}
-                <div className="flex items-start gap-4">
-                  <div className="text-event-primary mt-0.5">
-                    <EventlyIcon name="ticket" className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-event-muted-foreground text-sm font-medium leading-normal">Prix</p>
-                    <p className="text-event-foreground text-base font-medium leading-normal">{eventData.price}</p>
-                  </div>
-                </div>
+                {
+                  event?.ticket_prices.map(ticket => (
+                    <div className="flex items-start gap-4">
+                      <div className="text-event-primary mt-0.5">
+                        <EventlyIcon name="ticket" className="h-5 w-5" />
+                      </div>
+                      { /** Catégorie de prix (Correction)  */ }
+                      <div>
+                        <p className="text-event-muted-foreground text-sm font-medium leading-normal">Prix</p>
+                        <p className="text-event-foreground text-base font-medium leading-normal">{ticket.price} { process.env.VITE_CURRENCY }</p>
+                      </div>
+                    </div>
+                  ))
+                }
               </div>
 
               {/* Buy tickets button */}
               <div className="mt-8">
                 <Button
-                  onClick={handleBuyTickets}
+                  onClick={() => console.log("Event Paid !")}
                   className="w-full flex items-center justify-center gap-2 rounded-full h-12 px-6 bg-event-secondary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-event-secondary/90 transition-all shadow-lg shadow-event-secondary/30"
                 >
                   <EventlyIcon name="shopping_cart" className="h-5 w-5" />
