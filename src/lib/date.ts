@@ -66,6 +66,17 @@ export const formatDateTimeShort = (dateString: string | Date): string => {
 };
 
 
+export const formatDateToLetters = (date: Date | undefined): string => {
+    const formatter = new Intl.DateTimeFormat('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    return date ? formatter.format(new Date(date)) : "Aucune date";
+}
+
+
 export const dateFormat = (date: Date | null | undefined) => format(date ?? new Date(), "dd-MM-yyyy");
 
 export const timeFormat = (date: Date | null | undefined) => format(date ?? new Date(), "HH:ii");

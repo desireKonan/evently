@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import EventLayout from '@/components/layout/client/EventLayout';
 import EventlyIcon from '@/components/shared/EventlyIcons';
 import { useEventService } from '@/app/service/event.service';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { dateFormat, timeFormat } from '@/lib/date';
 import { LoadingPage } from '@/config/LoadingPage';
 
@@ -16,6 +16,11 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
   const { fetchEvent } = useEventService();
   const { id } = useParams<{ id :string; }>();
   const { data: event, isError, isLoading } = fetchEvent(id);
+  const navigate = useNavigate();
+
+  const goToSignInEvent = (id: string) => {
+    navigate(`/event/${id}/payment`);
+  }
 
   if(isError) {
     return (
@@ -137,7 +142,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = () => {
               {/* Buy tickets button */}
               <div className="mt-8">
                 <Button
-                  onClick={() => console.log("Event Paid !")}
+                  onClick={() => goToSignInEvent(event?.id || '')}
                   className="w-full flex items-center justify-center gap-2 rounded-full h-12 px-6 bg-event-secondary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-event-secondary/90 transition-all shadow-lg shadow-event-secondary/30"
                 >
                   <EventlyIcon name="shopping_cart" className="h-5 w-5" />

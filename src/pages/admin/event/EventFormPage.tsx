@@ -25,7 +25,8 @@ const EventFormPage: React.FC = () => {
   const isReadOnly = mode === 'view';
   
   const { form, onSubmit, isLoading, error } = useEventForm({
-    defaultValues: (!isEventLoading && mode !== 'create') ? data as EventDto : undefined
+    defaultValues: (mode !== 'create') ? data as EventDto : undefined,
+    isEventLoading
   });
   
 

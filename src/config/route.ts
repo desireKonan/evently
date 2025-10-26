@@ -14,6 +14,7 @@ export interface RouteConfig {
 // Import des composants de page
 const LandingPage = React.lazy(() => import('@/pages/client/LandingPage'));
 const EventDetailPage = React.lazy(() => import('@/pages/client/EventDetailPage'));
+const PaymentDetailPage = React.lazy(() => import('@/pages/client/SignInEventFormPage'));
 const ConfirmationPayment = React.lazy(() => import('@/pages/client/ConfirmationPage'));
 const LoginPage = React.lazy(() => import('@/pages/shared/LoginPage'));
 const DashboardPage = React.lazy(() => import('@/pages/admin/DashboardPage'));
@@ -46,6 +47,12 @@ export const routes: RouteConfig[] = [
     element: EventDetailPage,
     isPublic: true,
     title: 'Détails de l\'événement'
+  },
+  {
+    path: '/event/:id/payment',
+    element: PaymentDetailPage,
+    isPublic: true,
+    title: 'Formulaire d\'inscription à un évenement'
   },
   {
     path: '/confirmation',
