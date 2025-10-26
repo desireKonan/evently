@@ -15,11 +15,11 @@ export interface RouteConfig {
 const LandingPage = React.lazy(() => import('@/pages/client/LandingPage'));
 const EventDetailPage = React.lazy(() => import('@/pages/client/EventDetailPage'));
 const PaymentDetailPage = React.lazy(() => import('@/pages/client/SignInEventFormPage'));
-const ConfirmationPayment = React.lazy(() => import('@/pages/client/ConfirmationPage'));
 const LoginPage = React.lazy(() => import('@/pages/shared/LoginPage'));
 const DashboardPage = React.lazy(() => import('@/pages/admin/DashboardPage'));
 const EventFormPage = React.lazy(() => import('@/pages/admin/event/EventFormPage'));
 const EventListPage = React.lazy(() => import('@/pages/admin/event/EventListPage'));
+const PaymentListPage = React.lazy(() => import('@/pages/admin/payment/PaymentListPage'));
 const UserListPage = React.lazy(() => import('@/pages/admin/user/UserListPage'));
 const ParticipantListPage = React.lazy(() => import('@/pages/admin/participant/ParticipantListPage'));
 const CalendarPage = React.lazy(() => import('@/pages/admin/FullCalendarPage'));
@@ -53,12 +53,6 @@ export const routes: RouteConfig[] = [
     element: PaymentDetailPage,
     isPublic: true,
     title: 'Formulaire d\'inscription à un évenement'
-  },
-  {
-    path: '/confirmation',
-    element: ConfirmationPayment,
-    isPublic: true,
-    title: 'Confirmation de paiement'
   },
 
   // Routes d'authentification
@@ -100,6 +94,12 @@ export const routes: RouteConfig[] = [
     element: EventFormPage,
     requiredRole: ['ORGANIZER'],
     title: 'Détails de l\'événement'
+  },
+  {
+    path: '/event/:id/payments',
+    element: PaymentListPage,
+    requiredRole: ['ORGANIZER'],
+    title: 'La liste des paiements par évenement'
   },
   {
     path: '/admin/users',

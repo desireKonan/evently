@@ -19,7 +19,7 @@ const EventList: React.FC = () => {
   const { data: eventsData, isLoading, error, isError } = fetchAllEvents();
 
 
-   // Gestion du changement de page
+  // Gestion du changement de page
   const handlePageChange = (page: number) => {
     setPagination(prev => ({ ...prev, page }));
   };
@@ -41,6 +41,10 @@ const EventList: React.FC = () => {
 
   const handleView = (id: string) => {
     navigate(`/event/${id}/view`);
+  };
+
+  const goToPayments = (id: string) => {
+    navigate(`/event/${id}/payments`);
   };
 
   const handleEdit = (id: string) => {
@@ -70,6 +74,7 @@ const EventList: React.FC = () => {
   const columns = getColumns({
     onEdit: handleEdit,
     onView: handleView,
+    onGoToPayments: goToPayments,
     onPublish: handlePublish,
   });
 
@@ -127,7 +132,6 @@ const EventList: React.FC = () => {
             </div>
           )
         }
-        
       </div>
     </Layout>
   );

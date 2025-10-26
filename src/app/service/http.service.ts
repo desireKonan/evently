@@ -6,7 +6,7 @@ class HttpService {
 
   private constructor() {
     this.api = axios.create({
-      baseURL: process.env.VITE_EVENTLY_URL || 'http://localhost:3005/api/v1/',
+      baseURL: process.env.VITE_EVENTLY_URL || 'http://localhost:3005/api/v1',
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -114,6 +114,8 @@ class HttpService {
   private clearTokens(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('expiresDate');
+    localStorage.removeItem("auth-store");
   }
 
   /**

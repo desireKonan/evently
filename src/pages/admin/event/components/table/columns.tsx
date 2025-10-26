@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDateRangeWithTime, formatDateWithTime } from "@/lib/date";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Check, Edit, Eye } from "lucide-react";
+import { BanknoteArrowDown, Check, Edit, Eye } from "lucide-react";
 
 interface ColumnsProps {
   onEdit: (event: string) => void;
   onView: (event: string) => void;
+  onGoToPayments: (id: string) => void;
   onPublish: ({ id }: {
     id: string
 }) => void;
@@ -20,6 +21,7 @@ interface ColumnsProps {
 export const getColumns = ({
     onEdit,
     onView,
+    onGoToPayments,
     onPublish
 }: ColumnsProps): ColumnDef<EventElementDTO>[] => [
     {
@@ -96,6 +98,15 @@ export const getColumns = ({
                     >
                         <Eye className="h-4 w-4" />
                         <span className="sr-only">Voir</span>
+                    </Button>
+                    <Button 
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => onGoToPayments(event.id)}
+                        className="h-8 w-8 p-0"
+                    >
+                        <BanknoteArrowDown className="h-4 w-4" />
+                        <span className="sr-only">Voir les paiements</span>
                     </Button>
                     {
                         isDraft && (
