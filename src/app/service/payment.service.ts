@@ -39,7 +39,6 @@ const makePaymentForUser = async ({ id, user }: { id: string; user: User | null 
   if(user?.role !== 'ORGANIZER') {
     throw new Error('Vous ne pouvez pas validé ce payement ! Vous devez être obligatoirement organisateur de cet évenement !');
   }
-  console.log('Valeurs', id, user);
   const response = await httpService.put(`/payment/${id}/make`, {
     status: 'PAID'
   });
