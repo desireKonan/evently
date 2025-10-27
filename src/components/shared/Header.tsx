@@ -12,10 +12,10 @@ export function Header() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center gap-8">
-                        <a className="flex items-center gap-2 text-foreground" href="#">
+                        <Link className="flex items-center gap-2 text-foreground" to="/">
                             <EventlyLogo />
                             <h1 className="text-xl font-bold">Evently</h1>
-                        </a>
+                        </Link>
                         <nav className="hidden md:flex items-center gap-6">
                             <Link className="text-sm font-medium text-muted-foreground hover:text-event-primary transition-colors" to="/explore">Explorer</Link>
                             <Link className="text-sm font-medium text-muted-foreground hover:text-event-primary transition-colors" to="/create/event">Créer un événement</Link>

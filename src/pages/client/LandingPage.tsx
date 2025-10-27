@@ -54,7 +54,7 @@ const LandingPage = () => {
                 <TabsTrigger value="all" className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium">Tous les événements</TabsTrigger>
                 {
                   EVENT_TYPE_OPTIONS.map(eventType => (
-                    <TabsTrigger value={eventType.value} className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium"> { eventType.label } </TabsTrigger>                
+                    <TabsTrigger key={eventType.value} value={eventType.value} className="rounded-none border-b-2 data-[state=active]:border-event-primary data-[state=active]:text-event-primary data-[state=active]:shadow-none py-4 px-1 text-sm font-medium"> { eventType.label } </TabsTrigger>                
                   ))
                 }
               </TabsList>

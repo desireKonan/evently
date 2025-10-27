@@ -3,7 +3,7 @@ import EventLayout from '@/components/layout/client/EventLayout';
 import { LoadingPage } from '@/config/LoadingPage';
 import { usePaymentForm } from '@/hooks/use-form-payment';
 import { formatDateToLetters, timeFormat } from '@/lib/date';
-import { TicketCheck } from 'lucide-react';
+import { Lock, TicketCheck } from 'lucide-react';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -93,7 +93,7 @@ const SignInEventFormPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 mt-6">
             <form action={handleSubmit}>
               {/* Left Column - Summary */}
               <div className="lg:col-span-2 flex flex-col gap-6">
@@ -183,7 +183,7 @@ const SignInEventFormPage = () => {
                   <a className="hover:underline" href="#">Conditions Générales</a> •{' '}
                   <a className="hover:underline" href="#">Politique de Confidentialité</a>
                   <p className="mt-2 flex items-center justify-center gap-1.5">
-                    <span className="material-symbols-outlined text-base">lock</span> Paiement 100% sécurisé
+                    <Lock /> Paiement 100% sécurisé
                   </p>
                 </footer>
               </div>
@@ -254,7 +254,7 @@ const SignInEventFormPage = () => {
                   type="submit"
                   className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-primary text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors focus:ring-4 focus:ring-primary/50"
                 >
-                  Payer {total.toFixed(2)} { process.env.VITE_CURRENCY } et finaliser
+                  S'inscrire à l'évenement { event?.name } et payer {total.toFixed(2)} { process.env.VITE_CURRENCY } 
                 </button>
               </div>
             </form>
