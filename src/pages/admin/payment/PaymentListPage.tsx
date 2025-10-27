@@ -2,13 +2,11 @@ import React from 'react';
 import Layout from "@/components/layout/admin/AdminLayout";
 import { DataTable } from '@/components/shared/DataTable';
 import { getColumns } from './table/columns';
-import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { usePaymentService } from '@/app/service/payment.service';
 import { LoadingPage } from '@/config/LoadingPage';
 
 const PaymentList: React.FC = () => {
-  const navigate = useNavigate();
   const { setPagination, fetchAllPayments, validPaymentMutation } = usePaymentService();
   const { user } = useAuthStore();
 

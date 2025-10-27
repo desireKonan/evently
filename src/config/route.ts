@@ -21,9 +21,6 @@ const EventFormPage = React.lazy(() => import('@/pages/admin/event/EventFormPage
 const EventListPage = React.lazy(() => import('@/pages/admin/event/EventListPage'));
 const PaymentListPage = React.lazy(() => import('@/pages/admin/payment/PaymentListPage'));
 const UserListPage = React.lazy(() => import('@/pages/admin/user/UserListPage'));
-const ParticipantListPage = React.lazy(() => import('@/pages/admin/participant/ParticipantListPage'));
-const CalendarPage = React.lazy(() => import('@/pages/admin/FullCalendarPage'));
-const QRScannerPage = React.lazy(() => import('@/pages/shared/ScanPage'));
 
 // Pages de gestion
 const NotFoundPage = React.lazy(() => import('@/config/NotFound'));
@@ -106,26 +103,6 @@ export const routes: RouteConfig[] = [
     element: UserListPage,
     requiredRole: ['ADMIN', 'ORGANIZER'],
     title: 'Gestion des utilisateurs'
-  },
-  {
-    path: '/admin/participants',
-    element: ParticipantListPage,
-    requiredRole: ['ORGANIZER', 'ADMIN'],
-    title: 'Gestion des participants'
-  },
-  {
-    path: '/calendar-event',
-    element: CalendarPage,
-    requiredRole: ['ORGANIZER', 'USER'],
-    title: 'Calendrier'
-  },
-
-  // Routes organisateur
-  {
-    path: '/scan',
-    element: QRScannerPage,
-    requiredRole: ['USER', 'ORGANIZER'],
-    title: 'Scanner QR Code'
   },
 
 
