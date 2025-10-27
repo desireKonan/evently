@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
   const { login, isLoading, error } = useAuthStore();
 
   const {
@@ -137,4 +137,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

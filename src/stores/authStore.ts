@@ -1,4 +1,4 @@
-import type { User } from "@/app/model/user.model";
+import type { User, UserRole } from "@/app/model/user.model";
 import httpService from "@/app/service/http.service";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -9,6 +9,7 @@ interface AuthState {
   isAuthenticated: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (fullname: string, email: string, password: string, contacts: string[], role: UserRole) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -51,6 +52,42 @@ export const useAuthStore = create<AuthState>()(
 
             set({
               isAuthenticated: !!localStorage.getItem('accessToken') && !!user,
+            });
+          } catch (error) {
+            set({
+              isLoading: false,
+              error:
+                error instanceof Error
+                  ? error.message
+                  : "Une erreur est survenue",
+            });
+          }
+        },
+
+        register: async (fullname: string, email: string, password: string, contacts: string[], role: UserRole) => {
+          set({ isLoading: true, error: null });
+
+          try {
+            // Appel à votre API de connexion
+            const response = await httpService.post('/auth/register', {
+              fullname, 
+              email, 
+              password, 
+              contacts, 
+              role
+            });
+
+            if (response.status !== 200) {
+              throw new Error(response.request.error || "Erreur de connexion");
+            }
+
+            const { message, ...user } = response.data as unknown as any;
+
+            // Stockage des données d'authentification
+            set({
+              user,
+              isLoading: false,
+              error: null,
             });
           } catch (error) {
             set({

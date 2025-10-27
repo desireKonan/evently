@@ -1,7 +1,7 @@
 export type User = {
     id: string,
-    organizer_id: string,
-    organizer: Organizer,
+    organizer_id?: string,
+    organizer?: Organizer,
     fullname: string,
     email: string,
     contacts: string[],
