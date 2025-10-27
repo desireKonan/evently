@@ -14,7 +14,7 @@ const SignInEventFormPage = () => {
   const { fetchEvent } = useEventService();
   const { id } = useParams<{ id: string; }>();
   const { data: event, isError, isLoading } = fetchEvent(id);
-  const { form, onSubmit, isLoading: isFormLoading, error } = usePaymentForm({
+  const { form, onSubmit } = usePaymentForm({
     defaultValues: event ?? undefined,
     isEventLoading: isLoading
   });

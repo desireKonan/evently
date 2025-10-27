@@ -8,8 +8,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import type { EventDto } from '@/app/model/event.model';
+import { getStatusConfig, type EventDto } from '@/app/model/event.model';
+import { formatDateRangeWithTime } from '@/lib/date';
+import { getEventTypeLabel } from '@/app/schema/event.schema';
 
 interface RecentEventsTableProps {
   events: EventDto[];
@@ -24,32 +25,30 @@ const RecentEventsTable: React.FC<RecentEventsTableProps> = ({ events }: RecentE
           <TableHeader>
             <TableRow>
               <TableHead>Nom de l'événement</TableHead>
-              <TableHead>Date</TableHead>
               <TableHead>Organisateur</TableHead>
               <TableHead>Catégorie</TableHead>
               <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Date de début - Date de fin</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {events.map((event) => (
-              <TableRow key={event.id}>
-                <TableCell className="font-medium">{event.title}</TableCell>
-                <TableCell>{event.date}</TableCell>
-                <TableCell>{event.organizer}</TableCell>
-                <TableCell>{event.category}</TableCell>
-                <TableCell>
-                  <Badge variant={event.status === 'published' ? 'default' : 'secondary'} className={event.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                    {event.status === 'published' ? 'Publié' : 'Brouillon'}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="sm">
-                    Éditer
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {events.map((event) => {
+              const status = getStatusConfig(event.status);
+              return (
+                <TableRow key={event.id}>
+                  <TableCell className="font-medium">{event.name}</TableCell>
+                  <TableCell>{event.organizer.name}</TableCell>
+                  <TableCell>{ getEventTypeLabel(event.type) }</TableCell>
+                  <TableCell>
+                    <Badge variant={status.variant} className={status.className}>
+                      { status.label }
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{ formatDateRangeWithTime(event.start_date, event.end_date)}</TableCell>
+                </TableRow>
+              );
+            })
+          }
           </TableBody>
         </Table>
       </div>

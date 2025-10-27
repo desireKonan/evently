@@ -51,9 +51,7 @@ class HttpService {
             
             return this.api(originalRequest);
           } catch (refreshError) {
-            // Redirection vers la page de connexion en cas d'échec
             this.clearTokens();
-            window.location.href = '/login';
             return Promise.reject(refreshError);
           }
         }
