@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useAuthStore } from '@/stores/authStore';
-import { type LoginFormData, loginSchema } from '@/app/schema/auth.schema';
+import { type SignUpFormData, signUpSchema } from '@/app/schema/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
@@ -12,24 +12,30 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 
 const RegisterPage: React.FC = () => {
-  const { login, isLoading, error } = useAuthStore();
+  const { signup , isLoading, error } = useAuthStore();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
+      contacts: [],
+      role: 'USER'
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: SignUpFormData) => {
     try {
-      // Login to the application.
-      await login(data.email, data.password);
+      // Sign Up to the application.
+      const message = await signup(data);
+      toast.success(message, {
+        position: 'top-center'
+      })
     } catch (err) {
       // Les erreurs sont déjà gérées dans le store
       const errorMessage = err as string;
@@ -47,10 +53,10 @@ const RegisterPage: React.FC = () => {
       <main className="flex flex-1 justify-center items-center py-10">
         <Card className="w-full max-w-md p-8 rounded-2xl shadow-xl">
           <CardHeader className="p-0 mb-2">
-            <h2 className="text-event-foreground text-3xl font-bold text-center">Connexion</h2>
+            <h2 className="text-event-foreground text-3xl font-bold text-center">Inscription</h2>
           </CardHeader>
           <CardContent className="p-0">
-            <p className="text-event-muted-foreground text-center mb-8">Accédez à votre compte organisateur.</p>
+            <p className="text-event-muted-foreground text-center mb-8">Créer un compte utilisateur.</p>
 
             {/* Affichage des erreurs globales */}
             {error && (
@@ -60,6 +66,46 @@ const RegisterPage: React.FC = () => {
             )}
 
             <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-2">
+                <label className="text-event-foreground text-base font-medium" htmlFor="email">
+                  Nom complet
+                </label>
+                <Input
+                  {...register('name')}
+                  className={`
+                    flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl h-14 p-4 text-base font-normal transition-colors bg-white border-gray-300 text-event-foreground placeholder:text-gray-400 focus:border-event-primary focus:ring-event-primary
+                    ${
+                      errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                    }  
+                  `}
+                  id="fullname"
+                  placeholder="Ex: Konan Damien"
+                  type="text"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-event-foreground text-base font-medium" htmlFor="email">
+                  Contacts
+                </label>
+                <Input
+                  {...register('contacts.0')}
+                  className={`
+                    flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl h-14 p-4 text-base font-normal transition-colors bg-white border-gray-300 text-event-foreground placeholder:text-gray-400 focus:border-event-primary focus:ring-event-primary
+                    ${
+                      errors.contacts ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                    }  
+                  `}
+                  id="fullname"
+                  placeholder="Ex: 0707892110"
+                  type="text"
+                />
+                {errors.contacts && (
+                  <p className="text-red-500 text-sm mt-1">{errors.contacts.message}</p>
+                )}
+              </div>
               <div className="flex flex-col gap-2">
                 <label className="text-event-foreground text-base font-medium" htmlFor="email">
                   Email
@@ -117,16 +163,16 @@ const RegisterPage: React.FC = () => {
                     <span>Connexion...</span>
                   </div>
                 ) : (
-                  <span className="truncate">Se connecter</span>
+                  <span className="truncate">S'inscrire</span>
                 )}
               </Button>
               <p className="text-center text-sm font-normal text-event-muted-foreground">
-                Vous n'avez pas de compte ?{" "}
+                Vous avez un compte ?{" "}
                 <Link
                   className="font-medium text-event-secondary hover:underline"
-                  to={'/register'}
+                  to={'/login'}
                 >
-                  Inscrivez-vous
+                  Connectez-vous !
                 </Link>
               </p>
             </form>

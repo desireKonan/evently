@@ -1,5 +1,6 @@
 // UserDetail.tsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Interface pour les props du composant (si nécessaire)
 interface UserDetailProps {
@@ -28,9 +29,9 @@ const Header: React.FC = () => {
         <h1 className="text-xl font-bold">Eventify</h1>
       </div>
       <nav className="flex items-center gap-8">
-        <a className="text-sm font-medium text-gray-300 transition-colors hover:text-white" href="#">Explorer</a>
-        <a className="text-sm font-medium text-gray-300 transition-colors hover:text-white" href="#">Mes événements</a>
-        <a className="text-sm font-medium text-gray-300 transition-colors hover:text-white" href="#">Créer un événement</a>
+        <Link className="text-sm font-medium text-gray-300 transition-colors hover:text-white" to="/explore">Explorer</Link>
+        <Link className="text-sm font-medium text-gray-300 transition-colors hover:text-white" to="/">Mes événements</Link>
+        <Link className="text-sm font-medium text-gray-300 transition-colors hover:text-white" to="/create/event">Créer un événement</Link>
       </nav>
       <div className="flex items-center gap-4">
         <button className="relative rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white">

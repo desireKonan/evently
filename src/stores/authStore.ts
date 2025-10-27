@@ -1,4 +1,5 @@
-import type { User, UserRole } from "@/app/model/user.model";
+import type { User } from "@/app/model/user.model";
+import type { SignUpFormData } from "@/app/schema/auth.schema";
 import httpService from "@/app/service/http.service";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
@@ -9,7 +10,7 @@ interface AuthState {
   isAuthenticated: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (fullname: string, email: string, password: string, contacts: string[], role: UserRole) => Promise<void>;
+  signup: (data: SignUpFormData) => Promise<string>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -64,17 +65,14 @@ export const useAuthStore = create<AuthState>()(
           }
         },
 
-        register: async (fullname: string, email: string, password: string, contacts: string[], role: UserRole) => {
+        signup: async (data: SignUpFormData) => {
           set({ isLoading: true, error: null });
 
           try {
+            console.log('Data, ', data);
             // Appel à votre API de connexion
             const response = await httpService.post('/auth/register', {
-              fullname, 
-              email, 
-              password, 
-              contacts, 
-              role
+              ...data
             });
 
             if (response.status !== 200) {
@@ -82,13 +80,14 @@ export const useAuthStore = create<AuthState>()(
             }
 
             const { message, ...user } = response.data as unknown as any;
+            console.log('Utilisateur crée ', user);
 
             // Stockage des données d'authentification
             set({
-              user,
               isLoading: false,
               error: null,
             });
+            return message as string;
           } catch (error) {
             set({
               isLoading: false,
@@ -98,6 +97,7 @@ export const useAuthStore = create<AuthState>()(
                   : "Une erreur est survenue",
             });
           }
+          return '';
         },
 
         logout: async () => {

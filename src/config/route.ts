@@ -16,6 +16,7 @@ const LandingPage = React.lazy(() => import('@/pages/client/LandingPage'));
 const EventDetailPage = React.lazy(() => import('@/pages/client/EventDetailPage'));
 const PaymentDetailPage = React.lazy(() => import('@/pages/client/SignInEventFormPage'));
 const LoginPage = React.lazy(() => import('@/pages/shared/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/shared/RegisterPage'));
 const DashboardPage = React.lazy(() => import('@/pages/admin/DashboardPage'));
 const EventFormPage = React.lazy(() => import('@/pages/admin/event/EventFormPage'));
 const EventListPage = React.lazy(() => import('@/pages/admin/event/EventListPage'));
@@ -59,6 +60,13 @@ export const routes: RouteConfig[] = [
     isPublic: true,
     redirectIfAuthenticated: true,
     title: 'Connexion'
+  },
+  {
+    path: '/register',
+    element: RegisterPage,
+    isPublic: true,
+    redirectIfAuthenticated: true,
+    title: 'Inscription'
   },
 
   // Routes admin

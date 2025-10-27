@@ -48,7 +48,7 @@ export function Header() {
                             </div>
                         ) : (
                             <div className="flex gap-2">
-                                <Link to="/login" className="flex min-w-[100px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-transparent border-2 border-[#27ae60] text-[#27ae60] hover:bg-[#27ae60] hover:text-[#111714] text-base font-bold leading-normal tracking-[0.015em] transition-colors">
+                                <Link to="/register" className="flex min-w-[100px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-transparent border-2 border-[#27ae60] text-[#27ae60] hover:bg-[#27ae60] hover:text-[#111714] text-base font-bold leading-normal tracking-[0.015em] transition-colors">
                                     <span className="truncate">S'inscrire</span>
                                 </Link>
                                 <Link to="/login" className="flex min-w-[100px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-[#27ae60] text-[#111714] hover:bg-opacity-80 text-base font-bold leading-normal tracking-[0.015em] transition-colors">
