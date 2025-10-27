@@ -3,13 +3,90 @@ import Layout from "@/components/layout/admin/AdminLayout";
 import StatCard from '@/components/StatCard';
 import RecentEventsTable from '@/components/RecentEventsTable';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, ChartBarStackedIcon, Plus, User } from 'lucide-react';
+import { BanknoteArrowDown, BuildingIcon, Plus, TicketCheck, TicketPercent, UserCircle } from 'lucide-react';
 import { Toaster } from '@/components/ui/sonner';
 import { useStatisticService } from '@/app/service/statistics.service';
 import { useAuthStore } from '@/stores/authStore';
 import { LoadingPage } from '@/config/LoadingPage';
 import { useEventService } from '@/app/service/event.service';
-import type { StatCardData } from '@/app/model/statistics.model';
+import type { EventlyStatistics, StatCardData } from '@/app/model/statistics.model';
+
+const getStatsCards = (isLoading: boolean, stats: EventlyStatistics | undefined) : StatCardData[] => {
+  let increment: number = 0;
+  let statCards: StatCardData[] = [];
+  if(isLoading && !stats) return statCards;
+  if(!stats?.statistics) return statCards;
+
+  if(stats.userRole === 'ADMIN') {
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[0].label,
+      description: stats.statistics[0].label,
+      value: stats.statistics[0].value,
+      icon: UserCircle,
+      color: "text-[var(--primary-color)]"
+    });
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[1].label,
+      description: stats.statistics[1].label,
+      value: stats.statistics[1].value,
+      icon: BuildingIcon,
+      color: "text-[var(--primary-color)]"
+    });
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[2].label,
+      description: stats.statistics[2].label,
+      value: stats.statistics[2].value,
+      icon: TicketPercent,
+      color: "text-[var(--primary-color)]"
+    });
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[3].label,
+      description: stats.statistics[3].label,
+      value: stats.statistics[3].value,
+      icon: TicketCheck,
+      color: "text-[var(--primary-color)]"
+    });
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[4].label,
+      description: stats.statistics[4].label,
+      value: stats.statistics[4].value,
+      icon: BanknoteArrowDown,
+      color: "text-[var(--primary-color)]"
+    });
+  } else {
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[0].label,
+      description: stats.statistics[0].label,
+      value: stats.statistics[0].value,
+      icon: TicketPercent,
+      color: "text-[var(--primary-color)]"
+    });
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[1].label,
+      description: stats.statistics[1].label,
+      value: stats.statistics[1].value,
+      icon: TicketCheck,
+      color: "text-[var(--primary-color)]"
+    });
+    statCards.push({
+      id: increment++, 
+      title: stats.statistics[2].label,
+      description: stats.statistics[2].label,
+      value: stats.statistics[2].value,
+      icon: BanknoteArrowDown,
+      color: "text-[var(--primary-color)]"
+    });
+  }
+  return statCards;
+}
+
 
 const Dashboard: React.FC = () => {
   // Données pour les cartes de statistiques
@@ -21,34 +98,7 @@ const Dashboard: React.FC = () => {
   const { data: statistics, isError, isLoading } = getStatisticsByUser(user);
   const { data: published_events, isLoading: isEventLoading, isError: isEventError } = fetchAllPublishedEvents();
 
-  const statCards: StatCardData[] = [
-    {
-      id: 1,
-      title: "Événements",
-      value: isLoading && !statistics ? 0 : statistics.events_count,
-      description: "Le nombre d'évenements",
-      icon: Calendar,
-      color: "text-[var(--primary-color)]"
-    },
-    {
-      id: 2,
-      title: "Utilisateurs",
-      value: isLoading && !statistics ? 0 : statistics.events_tickets,
-      description: "Le nombre de participants aux évenements",
-      icon: User,
-      color: "text-[var(--primary-color)]"
-    },
-    {
-      id: 4,
-      title: "Catégories",
-      description: "Le nombre de catégories",
-      value: isLoading  && !statistics ? 0 : statistics.events_status_count
-              .map((status: any) => status.event_count as number)
-              .reduce((sum: number, count: number) => sum + count, 0),
-      icon: ChartBarStackedIcon,
-      color: "text-[var(--primary-color)]"
-    }
-  ];
+  const statCards: StatCardData[] = getStatsCards(isEventLoading, statistics);
 
   if (isError) {
     return (
@@ -61,8 +111,6 @@ const Dashboard: React.FC = () => {
       <LoadingPage label='Chargement des événements...' />
     );
   }
-
-
 
   return (
     <Layout pageTitle="Tableau de bord" buttons={
@@ -86,6 +134,7 @@ const Dashboard: React.FC = () => {
               title={card.title}
               icon={card.icon}
               value={card.value}
+              color={card.color}
               description={card.description}
             />
           ))}

@@ -4,10 +4,10 @@ import { type LucideIcon } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
-  value: number;
+  value: number | string;
   icon: LucideIcon;
   description: string;
-  // color?: string;
+  color: string;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, description }) => {

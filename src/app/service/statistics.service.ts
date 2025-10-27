@@ -1,18 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import type { StatisticAdminEvently, StatisticOrganizerEvently } from "../model/statistics.model";
+import type { EventlyStatistics } from "../model/statistics.model";
 import httpService from "./http.service";
 import type { User } from "../model/user.model";
 
-const getDashboardStatistics = async (user: User | null): Promise<any> => {
+const getDashboardStatistics = async (user: User | null): Promise<EventlyStatistics> => {
     let response = null;
     if(user?.role === 'ORGANIZER') {
-        response = await httpService.get<StatisticOrganizerEvently>(
-            `/statistics/organizer`
-        );    
+        response = await httpService.get<EventlyStatistics>(`/statistics/organizer`);    
     } else {
-        response = await httpService.get<StatisticAdminEvently>(
-            `/statistics/admin`
-        );
+        response = await httpService.get<EventlyStatistics>(`/statistics/admin`);
     }
     if (response.status !== 200) {
         throw new Error("Erreur lors de la récupération des statistiques de " + user?.role + " !");

@@ -1,31 +1,26 @@
 import type { LucideIcon } from "lucide-react";
-import type { EventStatus } from "./event.model";
+import type { UserRole } from "./user.model";
 
-export type StatisticOrganizerEvently = {
-    events_count: number;
-    events_tickets: number;
-    total_payment: number;
-    events_status_count: EventStatusCount[]; 
+export type EventlyStatistics = {
+    userRole: UserRole;
+    statistics: StatisticItem[];
+    event_status: EventStatusItem[];
 }
 
-export type StatisticAdminEvently = {
-    users_count: number;
-    organizers_count: number;
-    tickets_sell: number;
-    ticket_sell_amount: number;
-    events_status_count: EventStatusCount[];
+type StatisticItem = {
+    label: string;
+    value: number;
 }
 
-
-export type EventStatusCount = {
-    event_count: number;
-    status: EventStatus;
+export type EventStatusItem = {
+    count: number;
+    label: number;
 }
 
 export interface StatCardData {
   id: number;
   title: string;
-  value: number;
+  value: number | string;
   description: string;
   icon: LucideIcon;
   color: string;
