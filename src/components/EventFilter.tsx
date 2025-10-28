@@ -1,10 +1,11 @@
+import type { EventType } from '@/app/model/event.model'
 import { useEventStore } from '@/stores/eventStore'
 
 const categories = [
-  { key: 'all', label: 'Tous les événements' },
-  { key: 'music', label: 'Musique' },
-  { key: 'tech', label: 'Tech' },
-  { key: 'sports', label: 'Sports' },
+  { key: 'OTHER' as EventType, label: 'Tous les événements' },
+  { key: 'B2B' as EventType, label: 'B2B' },
+  { key: 'CONFERENCE' as EventType, label: 'Conférence' },
+  { key: 'GALA_DINNER' as EventType, label: 'Dînner Gala' },
 ] as const
 
 export function EventFilter() {

@@ -28,6 +28,7 @@ const PaymentList: React.FC = () => {
   };
 
   const handleView = (id: string) => {
+    console.log('Identifiant', id);
   };
 
   const columns = getColumns({

@@ -35,7 +35,7 @@ export function CustomDialogForm({
     children,
 }: PropsWithChildren<CustomDialogFormProps>) {
 
-    const handleAction = (event) => {
+    const handleAction = (event: any) => {
         event.preventDefault();
         handleSubmit?.();
     }

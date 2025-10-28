@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import EventForm from './form/EventForm';
 import SubEventsForm from './form/SubEventsForm';
 import CodeQrVisualizer from './form/CodeQrVisualizer';
-import BadgeVisualizer from './form/BadgeVisualizer';
+// import BadgeVisualizer from './form/BadgeVisualizer';
 import { useEventForm } from '@/hooks/use-form-event';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -175,7 +175,7 @@ const EventFormPage: React.FC = () => {
                 <TabsContent value="badge">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <BadgeVisualizer />
+                      {/* <BadgeVisualizer /> */}
                     </CardContent>
                   </Card>
                 </TabsContent>

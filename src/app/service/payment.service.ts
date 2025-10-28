@@ -69,7 +69,7 @@ export const usePaymentService = () => {
 
   const validPaymentMutation = useMutation({
     mutationFn: async ({ id, user }: { id: string; user: User | null }) => makePaymentForUser({ id, user }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payments"] });
       toast.success("Le paiement publié avec succès !");
     },

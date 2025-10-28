@@ -166,21 +166,21 @@ class HttpService {
   }
 
   // Méthode pour gérer les erreurs
-  private handleError(error: any): never {
-    if (error.response) {
-      // Erreur de réponse du serveur
-      console.error('Response error:', error.response.data);
-      throw new Error(error.response.data.message || 'Une erreur est survenue');
-    } else if (error.request) {
-      // Erreur de requête
-      console.error('Request error:', error.request);
-      throw new Error('Impossible de contacter le serveur');
-    } else {
-      // Autre erreur
-      console.error('Error:', error.message);
-      throw new Error(error.message);
-    }
-  }
+  // private handleError(error: any): never {
+  //   if (error.response) {
+  //     // Erreur de réponse du serveur
+  //     console.error('Response error:', error.response.data);
+  //     throw new Error(error.response.data.message || 'Une erreur est survenue');
+  //   } else if (error.request) {
+  //     // Erreur de requête
+  //     console.error('Request error:', error.request);
+  //     throw new Error('Impossible de contacter le serveur');
+  //   } else {
+  //     // Autre erreur
+  //     console.error('Error:', error.message);
+  //     throw new Error(error.message);
+  //   }
+  // }
 }
 
 export default HttpService.getInstance();

@@ -66,19 +66,19 @@ export const usePaymentForm = ({ defaultValues, isEventLoading }: UsePaymentForm
     });
   };
 
-  const updatePriceTicketWithQuantity = (id: string, category: Partial<PriceTicketWithQuantity>) => {
-    const currentCategories = form.getValues('ticketEvents');
-    form.setValue('ticketEvents', currentCategories, {
-      shouldValidate: true,
-    });
-  };
+  // const updatePriceTicketWithQuantity = (id: string, category: Partial<PriceTicketWithQuantity>) => {
+  //   const currentCategories = form.getValues('ticketEvents');
+  //   form.setValue('ticketEvents', currentCategories, {
+  //     shouldValidate: true,
+  //   });
+  // };
 
-  const removePriceTicketWithQuantity = (id: string) => {
-    const currentCategories = form.getValues('ticketEvents');
-    form.setValue('ticketEvents', currentCategories, {
-      shouldValidate: true,
-    });
-  };
+  // const removePriceTicketWithQuantity = (id: string) => {
+  //   const currentCategories = form.getValues('ticketEvents');
+  //   form.setValue('ticketEvents', currentCategories, {
+  //     shouldValidate: true,
+  //   });
+  // };
 
   return {
     form,
@@ -87,7 +87,7 @@ export const usePaymentForm = ({ defaultValues, isEventLoading }: UsePaymentForm
     error,
     clearError,
     addPriceTicketWithQuantity,
-    updatePriceTicketWithQuantity,
-    removePriceTicketWithQuantity
+    // updatePriceTicketWithQuantity,
+    // removePriceTicketWithQuantity
   };
 };

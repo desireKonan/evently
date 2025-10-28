@@ -93,7 +93,7 @@ export const useEventService = () => {
 
   const publishEventMutation = useMutation({
     mutationFn: async ({ id, user }: { id: string; user: User | null }) => publishedEventByUser({id, user }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
       toast.success("Événement publié avec succès");
     },

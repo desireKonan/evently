@@ -54,6 +54,7 @@ const SignInEventFormPage = () => {
 
   const handleSubmit = async (formData: FormData) => {
     try {
+      console.log('FormData', formData);
       const result = await onSubmit(form.getValues());
       toast.success(result.message, {
         position: 'top-center',

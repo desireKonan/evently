@@ -85,19 +85,19 @@ export const useEventForm = ({ defaultValues, isEventLoading }: UseEventFormProp
     });
   };
 
-  const updatePricingCategory = (id: string, category: Partial<PriceTicket>) => {
-    const currentCategories = form.getValues('ticket_prices');
-    form.setValue('ticket_prices', currentCategories, {
-      shouldValidate: true,
-    });
-  };
+  // const updatePricingCategory = (id: string, category: Partial<PriceTicket>) => {
+  //   const currentCategories = form.getValues('ticket_prices');
+  //   form.setValue('ticket_prices', currentCategories, {
+  //     shouldValidate: true,
+  //   });
+  // };
 
-  const removePricingCategory = (id: string) => {
-    const currentCategories = form.getValues('ticket_prices');
-    form.setValue('ticket_prices', currentCategories, {
-      shouldValidate: true,
-    });
-  };
+  // const removePricingCategory = (id: string) => {
+  //   const currentCategories = form.getValues('ticket_prices');
+  //   form.setValue('ticket_prices', currentCategories, {
+  //     shouldValidate: true,
+  //   });
+  // };
 
   const addSubEvents = (subEvents: string[]) => {
     form.setValue('sub_events', subEvents, {
@@ -112,8 +112,8 @@ export const useEventForm = ({ defaultValues, isEventLoading }: UseEventFormProp
     error,
     clearError,
     addPriceTicket,
-    updatePricingCategory,
-    removePricingCategory,
+    // updatePricingCategory,
+    // removePricingCategory,
     addSubEvents,
   };
 };

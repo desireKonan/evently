@@ -25,9 +25,9 @@ const EventList: React.FC = () => {
   };
 
   // Gestion du changement de limite
-  const handleLimitChange = (limit: number) => {
-    setPagination({ page: 1, limit });
-  };
+  // const handleLimitChange = (limit: number) => {
+  //   setPagination({ page: 1, limit });
+  // };
 
 
   const handlePublish = ({ id }: {id: string}) => {
