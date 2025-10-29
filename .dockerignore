@@ -1,2 +1,10 @@
+npm-debug.log
+
+/node_modules
+/build
+
 .env
-.env.prod
+.env.example
+
+
+compose.yml
