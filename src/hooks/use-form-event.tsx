@@ -6,6 +6,7 @@ import { useEventStore } from '@/stores/eventStore';
 import { useAuthStore } from '@/stores/authStore';
 import type { EventDto } from '@/app/model/event.model';
 import { useEffect } from 'react';
+import type { User } from '@/app/model/user.model';
 
 interface UseEventFormProps {
   defaultValues?: Partial<EventDto>;
@@ -41,10 +42,11 @@ export const useEventForm = ({ defaultValues, isEventLoading }: UseEventFormProp
       console.log('Initiatilisation');
       if(!isEventLoading && defaultValues) {
           form.reset({
+            id: defaultValues.id,
             name: defaultValues.name,
             description: defaultValues.description,
             place: defaultValues.place,
-            address: defaultValues.name,
+            address: defaultValues.address,
             organizer_id: defaultValues.organizer_id,
             type: defaultValues.type,
             limit: defaultValues.limit,
@@ -58,7 +60,7 @@ export const useEventForm = ({ defaultValues, isEventLoading }: UseEventFormProp
       }
     }, [isLoading, defaultValues]);
   
-  const onSubmit = async (data: EventFormData) => {
+  const onSubmit = async (data: EventFormData, user: User | null) => {
     if (!isAuthenticated) {
       form.setError('root', {
         message: 'Vous devez être connecté pour créer un événement',
@@ -67,8 +69,11 @@ export const useEventForm = ({ defaultValues, isEventLoading }: UseEventFormProp
     }
 
     try {
-      await createEvent(data);
+      await createEvent(data, user);
       // Redirection ou message de succès peut être géré ici
+      return {
+        message: 'Evenement créé avec succès !'
+      };
     } catch (err) {
       // L'erreur est déjà gérée dans le store
       console.error('Erreur lors de la création:', err);

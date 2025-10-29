@@ -1,3 +1,4 @@
+import { formatDateWithTime } from "@/lib/date";
 import { Download, Printer } from "lucide-react";
 import { useRef } from "react";
 import QRCode from 'react-qr-code';
@@ -13,8 +14,8 @@ const CodeQrVisualizer: React.FC<CodeQrVisualizerProps> = ({ eventId, eventData 
 
     const eventName = eventData?.name || "Événement";
     const eventLocation = eventData?.place || "Lieu non spécifié";
-    const eventDate = eventData?.start_date ? eventData.start_date.toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
-    const qrValue = eventId ? `${window.location.origin}/events/${eventId}` : "Aucun événement sélectionné";
+    const eventDate = eventData?.start_date ? formatDateWithTime(eventData.start_date) : formatDateWithTime(new Date());
+    const qrValue = eventId ? eventData.code_qr : "Aucun événement sélectionné";
 
     // Télécharger le QR code
     const downloadQRCode = () => {

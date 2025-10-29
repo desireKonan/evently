@@ -5,17 +5,19 @@ import { type UseFormReturn } from "react-hook-form";
 import { eventTypeOptions, type EventFormData } from "@/app/schema/event.schema";
 import { useEventStore } from "@/stores/eventStore";
 import { DateTimePicker } from "@/components/shared/DatetimePicker";
+import type { EventFormPageMode } from "../EventFormPage";
 
 interface EventFormProps {
     form: UseFormReturn<EventFormData>;
-    isReadOnly?: boolean;
+    mode: EventFormPageMode;
 }
 
 
-const EventForm: React.FC<EventFormProps> = ({ form, isReadOnly = false }) => {
+const EventForm: React.FC<EventFormProps> = ({ form, mode }) => {
     const { register, formState: { errors }, setValue, watch, getValues } = form;
     const { currentEvent } = useEventStore();
-
+    const isReadOnly = mode === 'view';
+    const isEditable = mode === 'edit';
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (isReadOnly) return;
@@ -286,7 +288,7 @@ const EventForm: React.FC<EventFormProps> = ({ form, isReadOnly = false }) => {
 
 
             {
-                isReadOnly && imageFile && imageFile.length > 0 && imageFile[0].name && (
+               (isReadOnly || isEditable) && imageFile && imageFile.length > 0 && imageFile[0].name && (
                     <div>
                         <label className="block text-sm font-medium leading-6 text-event-foreground">
                             Image de couverture

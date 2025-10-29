@@ -1,5 +1,7 @@
 import type { EventDto, EventType, TicketPrice } from "@/app/model/event.model";
+import type { User } from "@/app/model/user.model";
 import type { EventFormData } from "@/app/schema/event.schema";
+import httpService from "@/app/service/http.service";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -15,8 +17,7 @@ interface EventState {
   subEvents: string[];
   ticketPrices: TicketPrice[];
   setEvents: (events: EventDto[]) => void;
-  createEvent: (eventData: EventFormData) => Promise<void>;
-  updateEvent: (eventId: string, eventData: EventFormData) => Promise<void>;
+  createEvent: (eventData: EventFormData, user: User | null) => Promise<any>;
   clearError: () => void;
   resetCurrentEvent: () => void;
   setSelectedEvent: (event: EventDto | null) => void;
@@ -55,22 +56,32 @@ export const useEventStore = create<EventState>()(
 
         setEvents: (events) => set({ events }),
 
-        createEvent: async (eventData: EventFormData) => {
+        createEvent: async (eventData: EventFormData, user: User | null) => {
           set({ isLoading: true, error: null });
 
           try {
-            const token = JSON.parse(localStorage.getItem("user") || "");
-            console.log("Token, ", token);
+            console.log("User, ", user);
+            console.log("Event Data", eventData);
+
+            const { id, ...event } = eventData;
+            console.log(id);
 
             const formData = new FormData();
 
             // Ajouter les champs de base
             const eventWithSubEvents = {
-              ...eventData,
+              ...event,
               sub_events: get().subEvents,
               ticket_prices: get().ticketPrices
-            };
-            eventWithSubEvents["organizer_id"] = token["organizer_id"];
+            } as any;
+
+            if(id) {
+              eventWithSubEvents['id'] = id;
+            }
+
+            if(user?.organizer_id) {
+              eventWithSubEvents["organizer_id"] =  user.organizer_id;
+            }
 
             console.log("Event: ", eventWithSubEvents);
 
@@ -85,25 +96,17 @@ export const useEventStore = create<EventState>()(
               });
             }
 
-            const response = await fetch(
-              `${process.env.VITE_EVENTLY_URL}/events`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-                },
-                body: formData,
-              }
-            );
+            const response = await httpService.post(`/events`, formData);
 
-            if (!response.ok) {
-              const errorData = await response.json();
+            if (response.status !== 201 && response.status !== 200) {
+              const errorData = response.data as string;
               throw new Error(
-                errorData.message || "Erreur lors de la création de l'événement"
+                errorData || "Erreur lors de la création de l'événement"
               );
             }
 
-            const result = await response.json();
+            const result = response.data as any;
+            console.log('Result : ', result);
 
             set({
               isLoading: false,
@@ -113,77 +116,6 @@ export const useEventStore = create<EventState>()(
             get().clearTicketPrices();
             get().clearSubEvents();
           
-
-            
-
-            return result;
-          } catch (error) {
-            set({
-              isLoading: false,
-              error:
-                error instanceof Error
-                  ? error.message
-                  : "Une erreur est survenue",
-            });
-            throw error;
-          }
-        },
-
-        updateEvent: async (eventId: string, eventData: EventFormData) => {
-          set({ isLoading: true, error: null });
-
-          try {
-            const token = JSON.parse(localStorage.getItem("user") || "");
-
-            const formData = new FormData();
-
-            // Ajouter les champs de base avec les sub_events
-            const eventWithSubEvents = {
-              ...eventData,
-              sub_events: get().subEvents,
-              ticket_prices: get().ticketPrices
-            };
-
-            eventWithSubEvents["organizer_id"] = token["organizer_id"];
-
-            // Ajouter les champs de base
-            formData.append("event", JSON.stringify(eventWithSubEvents));
-
-            // Ajouter l'image si elle existe
-            if (eventData.images) {
-              eventData.images.forEach((image) => {
-                formData.append("images", image);
-                console;
-              });
-            }
-
-            const response = await fetch(`/api/events/${eventId}`, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-              },
-              body: formData,
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(
-                errorData.message ||
-                  "Erreur lors de la mise à jour de l'événement"
-              );
-            }
-
-            const result = await response.json();
-
-            set({
-              isLoading: false,
-              error: null,
-            });
-
-            // ON vide les sous-éléments.
-            get().clearTicketPrices();
-            get().clearSubEvents();
-
             return result;
           } catch (error) {
             set({

@@ -15,6 +15,8 @@ export const promotionalFormuleSchema = z.object({
 });
 
 export const eventFormSchema = z.object({
+  id: z.string()
+    .optional(),
   name: z.string(),
   description: z.string(),
   limit: z.number()

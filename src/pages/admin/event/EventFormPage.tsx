@@ -13,8 +13,10 @@ import { useEventService } from '@/app/service/event.service';
 import { ArrowLeft, Edit } from 'lucide-react';
 import type { EventDto } from '@/app/model/event.model';
 import { LoadingPage } from '@/config/LoadingPage';
+import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/authStore';
 
-type EventFormPageMode = 'create' | 'edit' | 'view';
+export type EventFormPageMode = 'create' | 'edit' | 'view';
 
 const EventFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ const EventFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const mode: EventFormPageMode = id ? (window.location.pathname.includes('/edit') ? 'edit' : 'view') : 'create';
   const { data, isLoading: isEventLoading, isError } = fetchEvent(id);
+  const { user } = useAuthStore();
   const isReadOnly = mode === 'view';
   
   const { form, onSubmit, isLoading, error } = useEventForm({
@@ -32,19 +35,15 @@ const EventFormPage: React.FC = () => {
 
   const handleSubmit = async (_: FormData) => {
     try {
-      await onSubmit(form.getValues());
+      const result = await onSubmit(form.getValues(), user);
       form.reset();
-      navigate('/dashboard', {
-        state: {
-          message: 'Evénement crée avec succès !'
-        }
+      toast.info(result?.message, {
+        position: 'top-center'
       });
     } catch (err) {
       form.reset();
-      navigate('/dashboard', {
-        state: {
-          message: error || 'Erreur lors de la création de l\'évenement!'
-        }
+      toast.info(err as string, {
+        position: 'top-center'
       });
     }
   };
@@ -154,7 +153,7 @@ const EventFormPage: React.FC = () => {
                 <TabsContent value="event">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <EventForm form={form} isReadOnly={isReadOnly} />
+                      <EventForm form={form} mode={mode} />
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -168,7 +167,7 @@ const EventFormPage: React.FC = () => {
                 <TabsContent value="code-qr">
                   <Card className="p-6">
                     <CardContent className="p-0">
-                      <CodeQrVisualizer />
+                      <CodeQrVisualizer eventId={data?.id} eventData={data}  />
                     </CardContent>
                   </Card>
                 </TabsContent>

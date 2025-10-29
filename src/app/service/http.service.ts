@@ -25,6 +25,13 @@ class HttpService {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+
+         // Si les données sont de type FormData, changer le Content-Type
+        if (config.data instanceof FormData) {
+          config.headers['Content-Type'] = 'multipart/form-data';
+          console.log('Headers : ', config.headers['Content-Type']);
+        }
+
         return config;
       },
       (error) => {
@@ -146,12 +153,31 @@ class HttpService {
   }
 
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    const response: AxiosResponse<T> = await this.api.post(url, data, config);
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {})
+      }
+    };
+    console.log('Request Config : ', requestConfig);
+
+    const response: AxiosResponse<T> = await this.api.post(url, data, requestConfig);
     return response;
   }
 
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    const response: AxiosResponse<T> = await this.api.put(url, data, config);
+    // Configuration spécifique pour FormData
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {})
+      }
+    };
+    console.log('Request Config : ', requestConfig);
+
+    const response: AxiosResponse<T> = await this.api.put(url, data, requestConfig);
     return response;
   }
 
@@ -161,26 +187,35 @@ class HttpService {
   }
 
   async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response: AxiosResponse<T> = await this.api.patch(url, data, config);
+     // Configuration spécifique pour FormData
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {})
+      }
+    };
+    console.log('Request Config : ', requestConfig);
+
+    const response: AxiosResponse<T> = await this.api.patch(url, data, requestConfig);
     return response.data;
   }
 
-  // Méthode pour gérer les erreurs
-  // private handleError(error: any): never {
-  //   if (error.response) {
-  //     // Erreur de réponse du serveur
-  //     console.error('Response error:', error.response.data);
-  //     throw new Error(error.response.data.message || 'Une erreur est survenue');
-  //   } else if (error.request) {
-  //     // Erreur de requête
-  //     console.error('Request error:', error.request);
-  //     throw new Error('Impossible de contacter le serveur');
-  //   } else {
-  //     // Autre erreur
-  //     console.error('Error:', error.message);
-  //     throw new Error(error.message);
-  //   }
-  // }
+
+  /**
+   * Méthode spécialisée pour les uploads de fichiers avec FormData
+   */
+  async uploadFile<T>(url: string, formData: FormData, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    const uploadConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    
+    return this.post<T>(url, formData, uploadConfig);
+  }
 }
 
 export default HttpService.getInstance();
