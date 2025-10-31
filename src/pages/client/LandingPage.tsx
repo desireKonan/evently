@@ -7,6 +7,7 @@ import { useEventService } from '@/app/service/event.service';
 import { EVENT_TYPE_OPTIONS } from '@/app/model/event.model';
 import { AboutSection } from '@/components/shared/AboutSection';
 import { FeaturesSection } from '@/components/shared/FeatureSection';
+import { HeroSection } from '@/components/shared/HeroSection';
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('OTHER');
@@ -25,6 +26,9 @@ const LandingPage = () => {
       {/* Main Content */}
       <main className="container mx-auto flex-1 px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col gap-12">
+          { /* About Sections  */ }
+          <HeroSection />
+
           { /* About Sections  */ }
           <AboutSection />
 
