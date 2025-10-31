@@ -8,6 +8,14 @@ export default {
 	theme: {
     	extend: {
     		colors: {
+				"pmi-events": {
+					blue: '#05bfe0',
+					orange: '#ff610f',
+					purple: '#4f17a8',
+					black: '#0c021c',
+					'black-purple': '#220a47',
+					'white': '#fbfafc'
+				},
     			event: {
     				primary: '#16a085',
     				secondary: '#27ae60',

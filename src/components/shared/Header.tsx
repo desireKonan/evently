@@ -1,14 +1,14 @@
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useAuthStore } from '@/stores/authStore'
-import { Link } from 'react-router-dom'
-import { EventlyLogo } from '../icons/EventlyLogo'
+import { Link } from 'react-router-dom';
+import { EventlyLogo } from '../icons/EventlyLogo';
 
 export function Header() {
     const { user, isAuthenticated } = useAuthStore()
 
     return (
-        <header className="sticky top-0 z-10 bg-event-background/80 backdrop-blur-sm shadow-md">
+        <header className="sticky top-0 z-20 bg-event-background/90 backdrop-blur-sm shadow-md">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center gap-8">
