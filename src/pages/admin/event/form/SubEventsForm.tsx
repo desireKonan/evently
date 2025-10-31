@@ -23,6 +23,7 @@ const SubEventsForm: React.FC<SubEventsFormProps> = ({ form, isReadOnly = false 
             <div className="mb-8">
                 <SubEventsGenerator
                     onSubEventsChange={handleSubEventsChange}
+                    form={form}
                     initialSubEvents={subEvents}
                 />
             </div>

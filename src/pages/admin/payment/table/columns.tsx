@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import type { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge";
 import type { PaymentDto } from "@/app/model/payment.model";
-import { Eye, Edit, Check } from "lucide-react";
+import { Eye, Check } from "lucide-react";
 import { formatDateToLetters } from "@/lib/date";
+import { EventlyTooltip } from "@/components/CustomTooltip";
 
 
 interface ColumnsProps {
@@ -122,43 +123,33 @@ export const getColumns = ({
         cell: ({ row }) => {
             const payment = row.original;
             const isNotPaid = payment.status !== 'PAID';
-            const isArrivedAt = !!payment.arrived_at;
             return (
-                <div className="p-3">
-                    <Button 
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onView(payment.id)}
-                        className="h-8 w-8 p-0"
-                    >
-                        <Eye className="h-4 w-4" />
-                        <span className="sr-only">Voir</span>
-                    </Button>
+                <div className="p-3 m-3">
+                    <EventlyTooltip label="Voir un évenement">
+                        <Button 
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onView(payment.id)}
+                            className="h-8 w-8 p-1 m-1"
+                        >
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">Voir</span>
+                        </Button>
+                    </EventlyTooltip>
+                    
                     {
                         isNotPaid && (
-                            <Button 
-                                variant="outline"
-                                size="sm"
-                                onClick={() => onValidate(payment.id)}
-                                className="h-8 w-8 p-0"
-                            >
-                                <Edit className="h-4 w-4" />
-                                <span className="sr-only">Éditer</span>
-                            </Button>
-                        )
-                    }
-
-                    {
-                        isArrivedAt && (
-                            <Button 
-                                variant="outline"
-                                size="sm"
-                                onClick={() => onValidate(payment.id)}
-                                className="h-8 w-8 p-0"
-                            >
-                                <Check className="h-4 w-4" />
-                                <span className="sr-only">Publier</span>
-                            </Button>
+                            <EventlyTooltip label="Valider une inscription">
+                                <Button 
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => onValidate(payment.id)}
+                                    className="h-8 w-8 p-1 m-1"
+                                >
+                                    <Check className="h-4 w-4" />
+                                    <span className="sr-only">Publier</span>
+                                </Button>    
+                            </EventlyTooltip>
                         )
                     }
                 </div>

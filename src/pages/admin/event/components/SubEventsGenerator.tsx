@@ -4,17 +4,21 @@ import { Plus, Trash2, ChevronUp, ChevronDown, Edit3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useEventStore } from '@/stores/eventStore';
+import type { UseFormReturn } from 'react-hook-form';
+import type { EventFormData } from '@/app/schema/event.schema';
 
 interface SubEventsGeneratorProps {
   onSubEventsChange?: (subEvents: string[]) => void;
   initialSubEvents?: string[];
   isDisabled?: boolean;
+  form: UseFormReturn<EventFormData>;
 }
 
 const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
   onSubEventsChange,
   initialSubEvents = [],
-  isDisabled = false
+  isDisabled = false,
+  form
 }) => {
   const [subEvents, setSubEvents] = useState<string[]>(initialSubEvents);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -117,6 +121,7 @@ const SubEventsGenerator: React.FC<SubEventsGeneratorProps> = ({
       <div className="space-y-4">
         {subEvents.map((subEvent, index) => (
           <SubEventItem
+            form={form}
             key={`${index}-${subEvent}`}
             index={index}
             subEvent={subEvent}
@@ -176,6 +181,7 @@ interface SubEventItemProps {
   onMove: (index: number, direction: 'up' | 'down') => void;
   onStartEditing: () => void;
   onStopEditing: () => void;
+  form: UseFormReturn<EventFormData>;
 }
 
 const SubEventItem: React.FC<SubEventItemProps> = ({
@@ -188,7 +194,9 @@ const SubEventItem: React.FC<SubEventItemProps> = ({
   onMove,
   onStartEditing,
   onStopEditing,
+  form
 }) => {
+  const { register } = form;
   const [localValue, setLocalValue] = useState(subEvent);
 
   const handleSave = () => {
@@ -232,6 +240,7 @@ const SubEventItem: React.FC<SubEventItemProps> = ({
         <div className="flex-1">
           {isEditing ? (
             <Input
+              {...register(`sub_events.${index}`)}
               value={localValue}
               onChange={(e) => setLocalValue(e.target.value)}
               onBlur={handleBlur}

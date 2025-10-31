@@ -52,7 +52,8 @@ export const usePaymentForm = ({ defaultValues, isEventLoading }: UsePaymentForm
       return await createPayment(data);
     } catch (err) {
       // L'erreur est déjà gérée dans le store
-      console.error('Erreur lors de la création:', err);
+      const errorMessage = (err as any).response.data.message;
+      console.error('Erreur lors de la création:', errorMessage);
     }
   };
 

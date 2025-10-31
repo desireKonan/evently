@@ -25,6 +25,7 @@ const SignInEventFormPage = () => {
       .map(ticketPrice => ticketPrice.quantity * ticketPrice.price)
       .reduce((sum, count) => sum + count, 0);
   };
+  
   const total = sumPrice();
   
   const handleTicketChange = (increment: number, index: number) => {
@@ -45,7 +46,6 @@ const SignInEventFormPage = () => {
   };
 
   const changeTicketPrice = (increment: number, index: number) => {
-    console.log('Value', increment);
     form.setValue(`ticketEvents.${index}.quantity`, increment);
     form.trigger(`ticketEvents.${index}.quantity`);
   }
@@ -54,17 +54,21 @@ const SignInEventFormPage = () => {
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      console.log('FormData', formData);
       const result = await onSubmit(form.getValues());
-      toast.success(result.message, {
-        position: 'top-center',
-        className: 'primary'
-      });
+      if(result) {
+        toast.success(result.message, {
+          position: 'top-center',
+          className: 'primary'
+        });
+      }
       form.reset();
       setTicketCounts([]);
     } catch (err) {
-      console.log('Error: ', err);
-      toast.error(err as string);
+      const error = err as any;
+      console.error('Error: ', error);
+      toast.error(error, {
+        position: 'top-center'
+      });
       form.reset();
     }
   };
