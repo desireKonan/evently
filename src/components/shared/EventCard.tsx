@@ -1,6 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { HeartCrackIcon } from 'lucide-react';
 import type { EventDto } from '@/app/model/event.model';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +10,7 @@ interface EventCardProps {
   onToggleFavorite: (eventId: string) => void
 }
 
-export function EventCard({ event, onToggleFavorite }: EventCardProps) {
+export function EventCard({ event }: EventCardProps) {
   const navigate = useNavigate();
   
   const toBuyTicket = (id: string) => {
@@ -20,14 +19,6 @@ export function EventCard({ event, onToggleFavorite }: EventCardProps) {
 
   return (
     <Card className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="absolute top-2 right-2 z-10 rounded-full bg-event-background/50 backdrop-blur-sm text-muted-foreground hover:text-event-accent"
-        onClick={() => onToggleFavorite(event.id)}
-      >
-        <HeartCrackIcon className={`${event.type === 'WORKSHOP' ? 'text-event-accent fill-event-accent' : ''}`} />
-      </Button>
       <div className="aspect-video overflow-hidden">
         <div 
           className="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105" 

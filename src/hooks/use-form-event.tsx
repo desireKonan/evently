@@ -49,7 +49,7 @@ export const useEventForm = ({ defaultValues, isEventLoading }: UseEventFormProp
             address: defaultValues.address,
             organizer_id: defaultValues.organizer_id,
             type: defaultValues.type,
-            limit: defaultValues.limit,
+            limit: defaultValues.limite,
             images: [ new File([], defaultValues.image_path ?? '') ],
             ticket_prices: defaultValues.ticket_prices,
             sub_events: defaultValues.sub_events,

@@ -3,7 +3,7 @@ export interface EventDto {
   name: string
   description?: string
   type: EventType
-  limit?: number
+  limite?: number
   image_path: string
   address?: string
   place?: string

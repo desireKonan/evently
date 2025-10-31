@@ -88,7 +88,7 @@ export const getColumns = ({
             cell: ({ row }) => {
                 const event = row.original;
                 const isPublished = event.status === 'PUBLISHED';
-                const isDraft = event.status === 'DRAFT';
+                const isDraft = event.status === 'DRAFT' || event.status === 'PENDING';
                 return (
                     <div className="p-3">
                         <EventlyTooltip label="Voir un évenement">

@@ -111,7 +111,7 @@ const EventForm: React.FC<EventFormProps> = ({ form, mode }) => {
                 <div className="mt-2">
                     <Input
                         id="limit"
-                        {...register('limit')}
+                        {...register('limit', { valueAsNumber: true })}
                         type="number"
                         className={`block w-full rounded-xl border-0 bg-white py-3 px-4 text-event-foreground shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-event-primary sm:text-sm sm:leading-6 ${errors.limit ? 'ring-red-500' : 'ring-gray-300'
                             } ${isReadOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}

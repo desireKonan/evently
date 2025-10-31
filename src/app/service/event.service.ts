@@ -61,17 +61,6 @@ const publishedEventByUser = async ({ id, user }: { id: string; user: User | nul
   return response.data;
 };
 
-// {
-//   const eventStatus = user?.role === "ADMIN" ? EventStatus.PUBLISHED : EventStatus.PENDING;
-//   const response = await httpService.put(`/events/${id}/validate`, {
-//     status: eventStatus
-//   });
-//   if (response.status !== 200) {
-//     throw new Error("Erreur lrs de la publication");
-//   }
-//   return response.data;
-// },
-
 
 /// Http Event Service utilisant (Tanstack Query).
 export const useEventService = () => {
