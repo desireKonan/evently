@@ -25,7 +25,7 @@ export const HeroSection = () => {
           {/* Contenu */}
           <div className="relative z-10 flex flex-col gap-4 items-center">
             <h1 className="text-white text-4xl font-black leading-tight tracking-tighter sm:text-5xl md:text-6xl max-w-3xl">
-              Découvrez, Vivez,{' '}
+              Découvrez, Vivez, {' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)]">
                 Partagez
               </span>{' '}
