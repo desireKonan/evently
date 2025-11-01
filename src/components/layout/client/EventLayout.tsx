@@ -1,7 +1,6 @@
 import React from 'react';
 import { Header } from '../../shared/Header';
 import Footer from '../../shared/Footer';
-import { HeroSection } from '@/components/shared/HeroSection';
 
 interface LayoutProps {
   classname?: string;
@@ -12,7 +11,6 @@ const EventLayout: React.FC<LayoutProps> = ({ children, classname = 'min-h-scree
   return (
     <div className={classname} style={{ fontFamily: '"Spline Sans", "Noto Sans", sans-serif' }}>
       <Header />
-      <HeroSection />
       {children}
       <Footer />
     </div>
