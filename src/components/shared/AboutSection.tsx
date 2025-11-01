@@ -31,7 +31,7 @@ export const AboutSection = () => {
             Connecter les gens à travers des expériences uniques
           </h2>
           <p className="text-[var(--text-secondary)] text-lg leading-relaxed mb-4">
-            Evently est né d'une passion : celle de rassembler les gens autour d'événements qui marquent les esprits.
+            PMI Côte d'Ivoire Events est né d'une passion : celle de rassembler les gens autour d'événements qui marquent les esprits.
             Notre mission est de simplifier la découverte et la gestion d'événements pour tous.
           </p>
           <p className="text-[var(--text-secondary)] text-lg leading-relaxed">
@@ -41,7 +41,7 @@ export const AboutSection = () => {
         
         <LandingCard className="bg-[#3c6328]">
           <h3 className="text-white text-2xl font-bold mb-6 text-center">
-            Pourquoi choisir Evently ?
+            Pourquoi choisir PMI Côte d'Ivoire Events ?
           </h3>
           <ul className="space-y-4">
             {features.map((feature, index) => (

@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
             <a className="flex items-center gap-3 text-white" href="#">
               <EventlyLogo />
               <h2 className="text-white text-2xl font-bold leading-tight tracking-[-0.015em]">
-                Evently
+                PMI Côte d'Ivoire Events
               </h2>
             </a>
             <p className="text-white text-sm">
@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-white mt-12 pt-8 text-white text-center">
-          <p>© {new Date().getFullYear()} Evently. Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} PMI Côte d'Ivoire Events. Tous droits réservés.</p>
         </div>
       </div>
     </footer>
