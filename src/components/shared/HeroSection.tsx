@@ -2,16 +2,11 @@ import { LandingButton } from "./LandingButton";
 import hero from '../../assets/hero.jpg';
 
 export const HeroSection = () => {
-  // const backgroundImageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuALR7JIBYCjh4pSajCvOg1hbWhwzRdyDgWTuEvMoQg_7uuc_Mh7vc93ib0d27Lf-lKVeW5j-zJmYvyQdcDiBa-dptaGzWJiPb4TsZjUyGmeKmAUrRe7V3v705Fbg5boBSbup6TkgRDPcAfRrftdm8KALH33YDLIiXhzZYIb24jLjuSKCRCzgyW6QH_cVw2IU02NzaMYvFvVx3WscwcbNPeepT99Z01o8wqV2AJGLCM-a_ljPihDd2Es2m8qyiiAPF2Eez0egmya9Fw";
-
   return (
-    <section className="w-full">
-      <div
-        className="relative flex flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center px-6 pb-10 text-center shadow-lg overflow-hidden text-center"
-      >
+    <section className="w-full min-h-[500px]">
+      <div className="relative min-h-[500px] flex flex-col gap-6 bg-cover bg-center bg-no-repeat items-center justify-center px-6 pb-10 text-center shadow-xl overflow-hidden text-center">
         {/* Image de fond avec flou */}
-        <div
-          className="absolute inset-0 bg-center bg-no-repeat bg-cover"
+        <div className="absolute inset-0 bg-center bg-no-repeat bg-cover"
           style={{
             backgroundImage: `url("${hero}")`,
             filter: 'blur(4px) brightness(0.7)',
