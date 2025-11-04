@@ -1,0 +1,57 @@
+.logo-img {
+  width: 140px;
+  height: auto;
+}
+
+.main-header {
+  box-shadow: 0 0 10px #b2b2b2d6;
+}
+
+.slider::before {
+  content: "";
+  display: block;
+  width: 100%;
+  top: 0;
+  background: #222222bf;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.slider {
+  position: relative;
+}
+
+.text-slide {
+  color: #ffff;
+  z-index: 2;
+  position: relative;
+  /* line-height: 500px; */
+  text-align: center;
+  font-size: 31px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.btn-slider {
+  position: absolute;
+  margin: 0 auto;
+  z-index: 2;
+  bottom: 20%;
+  left: 0;
+  width: 200px;
+  right: 0;
+  background: #fff;
+  color: #222;
+  border: 1px solid #fff;
+  transition: 0.3s all ease-out;
+  border-radius: 4px;
+}
+
+.btn-slider:hover {
+  background: transparent;
+  color: #fff;
+  transition: 0.3s all ease-in;
+}
